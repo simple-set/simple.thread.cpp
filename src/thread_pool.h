@@ -1,22 +1,21 @@
-//
-// Created by xk on 2024/5/28.
-//
-
 #ifndef SIMPLE_THREAD_CPP_THREAD_POOL_H
 #define SIMPLE_THREAD_CPP_THREAD_POOL_H
 
-
 #include <future>
 #include "task.h"
+#include "thread_factory.h"
 
 namespace simpleThread {
     class ThreadPool {
     private:
         int coreSize;
         int maxSize;
-        int activateSize;
+        int activateSiz;
+        simpleThread::thread_factory factory;
 
-        void createThread() noexcept;
+        void createThread() {
+            this->factory.create();
+        }
 
     public:
         ThreadPool();
@@ -26,10 +25,10 @@ namespace simpleThread {
         ThreadPool(int coreSize, int maxSize);
 
         // 析构函数
-        virtual ~ThreadPool();
+        virtual ~ThreadPool() = default;
 
         // 提交任务
-        void execute(simpleThread::Task &task) const noexcept;
+        void execute(simpleThread::Runnable *runnable) const noexcept;
 
         // 提交任务, 可异步获取结果
         template<class T>
@@ -41,16 +40,15 @@ namespace simpleThread {
         // 立即关闭线程池,未执行的任务被丢弃
         void shutdownNow() noexcept;
 
-        // 等待线程结束, 在shutdown之后调用
+        // 等待线程结束, 在shutdown之后调用, 否则将永久等待
         void join() noexcept;
 
         // 返回核心线程数
-        int getSize() const;
+        int getCoreSize() const;
 
         // 活跃线程数
-        int activeSize() const;
+        int getActiveSize() const;
     };
 }
-
 
 #endif //SIMPLE_THREAD_CPP_THREAD_POOL_H

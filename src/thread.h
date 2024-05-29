@@ -1,14 +1,26 @@
-//
-// Created by xk on 2024/5/28.
-//
-
 #ifndef SIMPLE_THREAD_CPP_THREAD_H
 #define SIMPLE_THREAD_CPP_THREAD_H
 
+#include <thread>
+#include "handler.h"
 
-class thread {
+namespace simpleThread {
+    class thread {
+    private:
+        std::thread work;
+        simpleThread::handler handler;
+    public:
+        thread();
 
-};
+        ~thread() = default;
+
+        auto getId();
+
+        void join();
+
+        void setDaemon();
+    };
+}
 
 
 #endif //SIMPLE_THREAD_CPP_THREAD_H

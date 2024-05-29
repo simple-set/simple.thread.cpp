@@ -6,10 +6,14 @@
 #define SIMPLE_THREAD_CPP_THREAD_FACTORY_H
 
 #include <thread>
+#include "thread.h"
 
-class thread_factory {
-
-};
+namespace simpleThread {
+    class thread_factory {
+    public:
+        simpleThread::thread* create();
+    };
+}
 
 
 std::thread ThreadFactory ()  noexcept;

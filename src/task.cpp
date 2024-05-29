@@ -1,9 +1,9 @@
 #include "task.h"
 
-// namespace simpleThread {
-//     template<typename T>
-//     class Task {
-//     public:
-//         virtual T run() = 0;
-//     };
-// }
+void simpleThread::Task::setRunnable(simpleThread::Runnable *runnable) {
+    Task::runnable = runnable;
+}
+
+void simpleThread::Task::setType(simpleThread::taskType type) {
+    Task::type = type;
+}

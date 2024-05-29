@@ -1,7 +1,7 @@
 #include <iostream>
 #include <any>
 #include <typeinfo>
-#include "thread.cpp"
+#include "task.h"
 
 class Animal{
 private:
@@ -14,6 +14,10 @@ class Dog :public Animal{
 private:
     std::string kind = "dog";
 public:
+    Dog() =default;
+    Dog(Dog const &dog) {
+        std::cout << "copy" << std::endl;
+    }
     void showKind() const {
         std::cout << this->kind << std::endl;
     }
@@ -28,42 +32,24 @@ void process1(Animal &animal) {
     animal.showKind();
 }
 
+Dog* createDog() {
+    return new Dog;
+//    dog->showKind();
+//    Dog& tmp = *dog;
+//    return dog;
+}
+
 int main() {
-    std::any i = 10;
-    if (typeid(simpleThread::Callable<int>) == i.type()) {
-        std::cout << "yes"<< std::endl;
-    }
+    auto i = createDog();
+    i->showKind();
 
-    int x = 10 + std::any_cast<int>(i);
-    std::cout << x << std::endl;
-    // int a = 10;
-    // auto add = [a](int x, int y) {return x+y+a;};
-    // std::vector<int(int, int)const> vec;
+//    std::any i = 10;
+//    if (typeid(simpleThread::Callable<int>) == i.type()) {
+//        std::cout << "yes"<< std::endl;
+//    }
+//
+//    int x = 10 + std::any_cast<int>(i);
+//    std::cout << x << std::endl;
 
-    // Dog dog;
-    // dog.showKind();
-    //
-    // Animal animal = dog;
-    // animal.showKind();
-    //
-    // Animal *animal1 = &dog;
-    // animal1->showKind();
-    //
-    // Animal &animal2 = dog;
-    // animal2.showKind();
-
-
-    // Animal *animal = new Dog;
-    // process(animal);
-    // process1(*animal);
-
-    // Animal *animal = new Dog;	// 赋值给父类指针
-    // animal->showKind();			// animal
-    // Person person;
-    // person.doShowKind();
-    //
-    // Animal animal = person;
-    // animal.doShowKind();
-    // func(person);
     return 0;
 }

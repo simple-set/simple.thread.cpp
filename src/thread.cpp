@@ -1,46 +1,22 @@
 #include <thread>
-#include <iostream>
-#include "task.cpp"
+#include "thread.h"
 
-namespace simpleThread {
-    class SimpleThread {
-    private:
-        std::thread work_thread;
-        std::atomic_bool daemon;
+simpleThread::thread::thread() {
+    this->work = std::move(std::thread(&simpleThread::handler::process, std::ref(this->handler)));
+}
 
-        void start() const noexcept {
-            while (true) {
-                std::cout << std::this_thread::get_id() << std::endl;
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
-        }
+auto simpleThread::thread::getId() {
+    return this->work.get_id();
+}
 
-    public:
-        SimpleThread() noexcept: daemon(false) {
-            this->work_thread = std::move(std::thread(&SimpleThread::start, this));
-        }
+void simpleThread::thread::join() {
+    if (this->work.joinable()) {
+        this->work.join();
+    }
+}
 
-        ~SimpleThread() {
-            if (this->work_thread.joinable()) {
-                this->work_thread.detach();
-            }
-        }
-
-        auto GetId() const {
-            return this->work_thread.get_id();
-        }
-
-        void SetDaemon() {
-            if (this->work_thread.joinable()) {
-                this->work_thread.detach();
-                this->daemon = true;
-            }
-        }
-
-        void join() {
-            if (this->work_thread.joinable()) {
-                this->work_thread.join();
-            }
-        }
-    };
+void simpleThread::thread::setDaemon() {
+    if (this->work.joinable()) {
+        this->work.detach();
+    }
 }

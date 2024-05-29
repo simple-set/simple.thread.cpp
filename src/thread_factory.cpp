@@ -4,3 +4,6 @@
 
 #include "thread_factory.h"
 
+simpleThread::thread* simpleThread::thread_factory::create() {
+    return new simpleThread::thread;
+}

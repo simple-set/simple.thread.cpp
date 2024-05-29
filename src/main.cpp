@@ -1,38 +1,69 @@
 #include <iostream>
-#include <future>
+#include <any>
+#include <typeinfo>
 #include "thread.cpp"
 
-void process(threadPool::SimpleThread *thread) {
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    thread->SetDaemon();
-}
+class Animal{
+private:
+    std::string kind = "animal";
+public:
+    virtual void showKind() const = 0;
+};
 
-void func1() {
-    std::cout << "sleep, tid: " << std::this_thread::get_id() << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(20));
-}
-
-void func2(std::thread *t) {
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    if (t->joinable()) {
-        std::cout << "detach, tid: " << t->get_id() << std::endl;
-        t->detach();
-        std::cout << "detach, tid: " << t->get_id() << std::endl;
-        std::cout << "joinable: " << t->joinable() << std::endl;
-        // t->join();
-        // std::cout << "joinable" << t->joinable() << t->joinable();
+class Dog :public Animal{
+private:
+    std::string kind = "dog";
+public:
+    void showKind() const {
+        std::cout << this->kind << std::endl;
     }
+};
+
+
+void process(Animal *animal) {
+    animal->showKind();
+}
+
+void process1(Animal &animal) {
+    animal.showKind();
 }
 
 int main() {
-    std::thread t(func1);
-    std::thread(func2, &t).detach();
-    // std::thread(func2, &t).join();
-    t.join();
+    std::any i = 10;
+    if (typeid(simpleThread::Callable<int>) == i.type()) {
+        std::cout << "yes"<< std::endl;
+    }
 
-    // std::cout << std::this_thread::get_id() << std::endl;
-    // threadPool::SimpleThread thread;
-    // std::thread(process, &thread).detach();
-    // thread.join();
+    int x = 10 + std::any_cast<int>(i);
+    std::cout << x << std::endl;
+    // int a = 10;
+    // auto add = [a](int x, int y) {return x+y+a;};
+    // std::vector<int(int, int)const> vec;
+
+    // Dog dog;
+    // dog.showKind();
+    //
+    // Animal animal = dog;
+    // animal.showKind();
+    //
+    // Animal *animal1 = &dog;
+    // animal1->showKind();
+    //
+    // Animal &animal2 = dog;
+    // animal2.showKind();
+
+
+    // Animal *animal = new Dog;
+    // process(animal);
+    // process1(*animal);
+
+    // Animal *animal = new Dog;	// 赋值给父类指针
+    // animal->showKind();			// animal
+    // Person person;
+    // person.doShowKind();
+    //
+    // Animal animal = person;
+    // animal.doShowKind();
+    // func(person);
     return 0;
 }

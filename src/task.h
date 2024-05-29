@@ -5,15 +5,18 @@
 #ifndef SIMPLE_THREAD_CPP_TASK_H
 #define SIMPLE_THREAD_CPP_TASK_H
 
-// template<class T>
-// class task {
-//
-// };
+namespace simpleThread {
+    class Task {
+    public:
+        virtual void run() = 0;
+    };
+}
 
-// namespace threadPool {
-//     template<typename T>
-//     class Task {
-//
-//     };
-// }
+namespace simpleThread {
+    template<class T>
+    class Callable {
+    public:
+        virtual T call() = 0;
+    };
+}
 #endif //SIMPLE_THREAD_CPP_TASK_H

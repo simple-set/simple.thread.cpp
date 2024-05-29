@@ -2,12 +2,11 @@
 #include <iostream>
 #include "task.cpp"
 
-namespace threadPool {
+namespace simpleThread {
     class SimpleThread {
     private:
         std::thread work_thread;
         std::atomic_bool daemon;
-        std::__thread_id tid;
 
         void start() const noexcept {
             while (true) {
@@ -19,7 +18,6 @@ namespace threadPool {
     public:
         SimpleThread() noexcept: daemon(false) {
             this->work_thread = std::move(std::thread(&SimpleThread::start, this));
-            this->tid = work_thread.get_id();
         }
 
         ~SimpleThread() {
@@ -34,18 +32,14 @@ namespace threadPool {
 
         void SetDaemon() {
             if (this->work_thread.joinable()) {
-                std::cout << "setDaemon" << std::endl;
                 this->work_thread.detach();
                 this->daemon = true;
-                std::cout << "joinable: " << work_thread.joinable() << std::endl;
             }
         }
 
         void join() {
             if (this->work_thread.joinable()) {
-                std::cout << "join" << std::endl;
                 this->work_thread.join();
-                std::cout << "join" << std::endl;
             }
         }
     };

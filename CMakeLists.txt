@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.28)
 project(simple_thread_cpp)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(src)
 
 add_executable(simple_thread_cpp
         src/main.cpp
-        src/main.h
+#        src/main.h
         src/task.cpp
         src/task.h
         src/thread.cpp
@@ -17,4 +18,6 @@ add_executable(simple_thread_cpp
         src/thread_manage.cpp
         src/thread_manage.h
         src/thread_pool.cpp
-        src/thread_pool.h)
+        src/thread_pool.h
+        src/utils.cpp
+        src/utils.h)

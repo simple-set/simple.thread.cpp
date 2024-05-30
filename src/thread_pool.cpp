@@ -29,7 +29,7 @@ namespace simpleThread {
         Task* task = new Task;
         task->setType(taskType::runnable);
         task->setRunnable(runnable);
-//        this->queue.push(task);
+        this->taskQueue.push(task);
     }
 
     template<class T>

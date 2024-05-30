@@ -9,13 +9,15 @@
 #include "thread.h"
 
 namespace simpleThread {
-    class thread_factory {
+    class ThreadFactory {
+    private:
+        std::mutex mux;
     public:
-        simpleThread::thread* create();
+        simpleThread::thread *create() noexcept;
     };
 }
 
 
-std::thread ThreadFactory ()  noexcept;
+// std::thread ThreadFactory() noexcept;
 
 #endif //SIMPLE_THREAD_CPP_THREAD_FACTORY_H

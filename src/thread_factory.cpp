@@ -4,6 +4,9 @@
 
 #include "thread_factory.h"
 
-simpleThread::thread* simpleThread::thread_factory::create() {
-    return new simpleThread::thread;
+namespace simpleThread {
+    thread *ThreadFactory::create() noexcept {
+        std::lock_guard<std::mutex> lock(this->mux);
+        return new thread;
+    }
 }

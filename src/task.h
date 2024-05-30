@@ -26,8 +26,11 @@ namespace simpleThread {
     public:
         void setType(taskType type);
 
-    public:
+        [[nodiscard]] taskType getType() const;
+
         void setRunnable(Runnable *runnable);
+
+        [[nodiscard]] Runnable *getRunnable() const;
     };
 }
 

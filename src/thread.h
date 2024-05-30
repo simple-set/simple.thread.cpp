@@ -5,14 +5,14 @@
 #include "handler.h"
 
 namespace simpleThread {
-    class thread {
+    class WorkThread {
     private:
         std::thread work;
         simpleThread::handler handler;
     public:
-        thread();
+        WorkThread();
 
-        ~thread() = default;
+        ~WorkThread() = default;
 
         auto getId();
 

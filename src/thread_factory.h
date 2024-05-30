@@ -6,18 +6,19 @@
 #define SIMPLE_THREAD_CPP_THREAD_FACTORY_H
 
 #include <thread>
+#include <mutex>
 #include "thread.h"
 
 namespace simpleThread {
     class ThreadFactory {
     private:
-        std::mutex mux;
+        std::mutex mtx;
     public:
-        simpleThread::thread *create() noexcept;
+        simpleThread::WorkThread *create() noexcept;
     };
 }
 
 
-// std::thread ThreadFactory() noexcept;
+// std::WorkThread ThreadFactory() noexcept;
 
 #endif //SIMPLE_THREAD_CPP_THREAD_FACTORY_H

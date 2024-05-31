@@ -2,6 +2,7 @@
 #define SIMPLE_THREAD_CPP_STL_THREAD_H
 
 #include <thread>
+#include <atomic>
 #include "task_queue.h"
 #include "process.h"
 

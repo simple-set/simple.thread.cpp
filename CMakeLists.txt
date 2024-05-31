@@ -4,7 +4,7 @@ project(simple_thread_cpp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(src)
+#include_directories(src)
 
 add_executable(simple_thread_cpp
         src/main.cpp

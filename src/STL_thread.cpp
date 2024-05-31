@@ -7,8 +7,10 @@ namespace simpleThread {
     }
 
     void STLThread::join() {
-        this->process.setDone();
-        this->work.join();
+        if (this->work.joinable()) {
+            this->process.setDone();
+            this->work.join();
+        }
     }
 
     void STLThread::setDaemon() {
@@ -22,13 +24,9 @@ namespace simpleThread {
         this->setDaemon();
     }
 
-    STLThread::STLThread(TaskQueue *queue) : queue(queue) {
-        this->process.setQueue(this->queue);
-        this->createThread();
-    }
+    STLThread::STLThread(TaskQueue *queue): STLThread(queue, nullptr){}
 
-    STLThread::STLThread(TaskQueue *queue, std::atomic_int *counter) : queue(queue) {
-        this->counter = counter;
+    STLThread::STLThread(TaskQueue *queue, std::atomic_int *counter) : queue(queue), counter(counter) {
         this->process.setQueue(queue);
         this->createThread();
     }
@@ -38,14 +36,8 @@ namespace simpleThread {
     }
 
     void STLThread::start() {
-        if (this->counter != nullptr) {
-            this->counter->store(1);
-        }
-
+        if (this->counter != nullptr) {this->counter->store(1);}
         this->process.work();
-
-        if (this->counter != nullptr) {
-            this->counter->store(1);
-        }
+        if (this->counter != nullptr) {this->counter->store(1);}
     }
 }

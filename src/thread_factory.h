@@ -1,12 +1,9 @@
-//
-// Created by xk on 2024/5/28.
-//
-
 #ifndef SIMPLE_THREAD_CPP_THREAD_FACTORY_H
 #define SIMPLE_THREAD_CPP_THREAD_FACTORY_H
 
 #include <thread>
 #include <mutex>
+#include "task_queue.h"
 #include "STL_thread.h"
 
 namespace simpleThread {
@@ -14,11 +11,8 @@ namespace simpleThread {
     private:
         std::mutex mtx;
     public:
-        simpleThread::STLThread *create() noexcept;
+        STLThread *create(TaskQueue *queue, std::atomic_int *counter) noexcept;
     };
 }
-
-
-// std::STLThread ThreadFactory() noexcept;
 
 #endif //SIMPLE_THREAD_CPP_THREAD_FACTORY_H

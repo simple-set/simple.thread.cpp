@@ -23,3 +23,5 @@ add_executable(simple_thread_cpp
         src/process.h
         src/process.cpp
 )
+
+target_link_libraries(simple_thread_cpp pthread)

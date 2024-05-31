@@ -4,6 +4,7 @@
 #include "process.h"
 #include <thread>
 #include "STL_thread.h"
+#include "thread_factory.h"
 
 
 class Test : public simpleThread::Runnable {
@@ -30,10 +31,16 @@ int main() {
     // process.work();
     // process.setDone();
 
-    simpleThread::STLThread thread(&queue);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    // thread.join();
-    thread.shutdown();
+//    simpleThread::STLThread thread(&queue);
+//    std::this_thread::sleep_for(std::chrono::seconds(1));
+//    thread.shutdown();
+//    thread.join();
+
+    simpleThread::ThreadFactory factory;
+    auto thread = factory.create(&queue, nullptr);
+//    thread->shutdown();
+    thread->join();
+    delete thread;
 
     //
     // return 0;

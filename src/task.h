@@ -2,7 +2,7 @@
 #define SIMPLE_THREAD_CPP_TASK_H
 
 namespace simpleThread {
-    enum class taskType {
+    enum class taskKind {
         runnable,
         callable
     };
@@ -20,15 +20,15 @@ namespace simpleThread {
 
     class Task {
     private:
-        taskType type;
+        taskKind type;
         Runnable *runnable;
 
     public:
-        void setType(taskType type);
+        void setType(taskKind kind);
 
-        [[nodiscard]] taskType getType() const;
+        [[nodiscard]] taskKind getType() const;
 
-        void setRunnable(Runnable *runnable);
+        void setRunnable(Runnable *run);
 
         [[nodiscard]] Runnable *getRunnable() const;
     };

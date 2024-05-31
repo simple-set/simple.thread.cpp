@@ -16,10 +16,8 @@ add_executable(simple_thread_cpp
         src/thread_pool.h
         src/utils.cpp
         src/utils.h
-        src/handler.cpp
-        src/handler.h
-        src/thread.cpp
-        src/thread.h
+        src/STL_thread.cpp
+        src/STL_thread.h
         src/task_queue.h
         src/task_queue.cpp
         src/process.h

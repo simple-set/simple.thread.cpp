@@ -9,23 +9,30 @@
 namespace simpleThread {
     class Process {
     private:
+        // 任务队列
         TaskQueue *queue;
-        std::timed_mutex *mtx;
-        // 线程状态
-        bool done = false;
-        // 线程监听任务队列轮询时间(毫秒)
-        int const POLL_TIME = 50;
+
+        // 任务队列为空时, 退出执行
+        bool volatile done = false;
+
+        // 不管队列状态，立即退出执行
+        bool volatile shutdown = false;
+
+        // 任务轮训间隔时间(毫秒)
+        int const WAIT_TIME = 50;
 
         Task *getTask() const noexcept; // NOLINT(*-use-nodiscard)
 
     public:
-        explicit Process(TaskQueue *queue);
+        void setDone();
+
+        void setShutdown();
+
+        void setQueue(TaskQueue *taskQueue);
 
         void work() const noexcept;
 
-        void setDone();
-
-        void static doWork(Task *task) noexcept;
+        void static executeTask(Task *task) noexcept;
     };
 }
 

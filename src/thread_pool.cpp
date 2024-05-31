@@ -2,7 +2,7 @@
 #include "utils.h"
 
 namespace simpleThread {
-    simpleThread::ThreadPool::ThreadPool() {
+    ThreadPool::ThreadPool() {
         int size = cpuCount();
         ThreadPool(size, size);
     }
@@ -19,21 +19,21 @@ namespace simpleThread {
         if (this->maxSize <= 0 || this->maxSize < this->coreSize) {
             this->maxSize = this->coreSize;
         }
-
-        for (int i = 0; i < this->coreSize; ++i) {
-            this->createThread();
-        }
+        this->createThread();
+        // for (int i = 0; i < this->coreSize; ++i) {
+        //     this->createThread();
+        // }
     }
 
-    void ThreadPool::execute(simpleThread::Runnable *runnable) const noexcept {
+    void ThreadPool::execute(Runnable *runnable) const noexcept {
         Task* task = new Task;
-        task->setType(taskType::runnable);
+        task->setType(taskKind::runnable);
         task->setRunnable(runnable);
-        this->taskQueue.push(task);
+        // this->taskQueue.push(task);
     }
 
     template<class T>
-    std::future<T> ThreadPool::submit(simpleThread::Callable<T> &task) const noexcept {
+    std::future<T> ThreadPool::submit(Callable<T> &task) const noexcept {
 
     }
 
@@ -47,5 +47,13 @@ namespace simpleThread {
 
     int ThreadPool::getActiveSize() const {
         return this->activateSiz;
+    }
+
+    void ThreadPool::createThread() {
+        for (int i = 0; i < this->coreSize; ++i) {
+            // auto process = new Process(&this->taskQueue);
+
+            // this->threads.emplace_back();
+        }
     }
 }

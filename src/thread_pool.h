@@ -5,6 +5,7 @@
 #include "task.h"
 #include "thread_factory.h"
 #include "task_queue.h"
+#include "process.h"
 
 namespace simpleThread {
     class ThreadPool {
@@ -12,12 +13,11 @@ namespace simpleThread {
         int coreSize;
         int maxSize;
         int activateSiz;
+        std::vector<STLThread> threads;
         TaskQueue taskQueue;
         simpleThread::ThreadFactory factory;
 
-        void createThread() {
-            this->factory.create();
-        }
+        void createThread();
 
     public:
         ThreadPool();

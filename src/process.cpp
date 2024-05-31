@@ -2,41 +2,43 @@
 #include "process.h"
 
 namespace simpleThread {
-    Process::Process(TaskQueue *queue) {
-        if (queue != nullptr) {
-            this->queue = queue;
-        }
+    void Process::setDone() {
+        this->done = true;
+    }
+
+    void Process::setShutdown() {
+        this->shutdown = true;
+    }
+
+    void Process::setQueue(TaskQueue *taskQueue) {
+        Process::queue = taskQueue;
     }
 
     Task *Process::getTask() const noexcept {
-        if (this->mtx->try_lock_for(std::chrono::milliseconds(this->POLL_TIME))) {
-            return this->queue->pull();
-        } else {
-            return nullptr;
-        }
+        return this->queue->pull();
     }
 
     void Process::work() const noexcept {
-        while (!this->done) {
+        while (!this->shutdown) {
             Task *task = this->getTask();
 
             if (task != nullptr) {
-                Process::doWork(task);
+                Process::executeTask(task);
+            } else if (this->done) {
+                return;
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(this->WAIT_TIME));
             }
         }
     }
 
-    void Process::doWork(Task *task) noexcept {
+    void Process::executeTask(Task *task) noexcept {
         try {
-            if (task->getType() == taskType::runnable) {
+            if (task->getType() == taskKind::runnable) {
                 task->getRunnable()->run();
             }
         } catch (std::exception &e) {
             std::cerr << "err: " << e.what() << std::endl;
         }
-    }
-
-    void Process::setDone() {
-        this->done = true;
     }
 }

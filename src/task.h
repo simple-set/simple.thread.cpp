@@ -24,11 +24,9 @@ namespace simpleThread {
         Runnable *runnable;
 
     public:
-        void setType(taskKind kind);
+        explicit Task(Runnable *runnable);
 
         [[nodiscard]] taskKind getType() const;
-
-        void setRunnable(Runnable *run);
 
         [[nodiscard]] Runnable *getRunnable() const;
     };

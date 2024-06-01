@@ -2,14 +2,9 @@
 #include "utils.h"
 
 namespace simpleThread {
-    ThreadPool::ThreadPool() {
-        int size = cpuCount();
-        ThreadPool(size, size);
-    }
+    ThreadPool::ThreadPool() : ThreadPool(cpuCount()) {}
 
-    ThreadPool::ThreadPool(int size) {
-        ThreadPool(size, size);
-    }
+    ThreadPool::ThreadPool(int size) : ThreadPool(size, size) {}
 
     // 构造函数, 并创建核心线程数, 线程数必须大于0
     ThreadPool::ThreadPool(int coreSize, int maxSize) : coreSize(coreSize), maxSize(maxSize) {
@@ -19,27 +14,39 @@ namespace simpleThread {
         if (this->maxSize <= 0 || this->maxSize < this->coreSize) {
             this->maxSize = this->coreSize;
         }
-        this->createThread();
-        // for (int i = 0; i < this->coreSize; ++i) {
-        //     this->createThread();
-        // }
+        this->initThread();
     }
 
-    void ThreadPool::execute(Runnable *runnable) const noexcept {
-        Task* task = new Task;
-        task->setType(taskKind::runnable);
-        task->setRunnable(runnable);
-        // this->taskQueue.push(task);
+    void ThreadPool::initThread() {
+        for (int i = 0; i < this->coreSize; ++i) {
+            this->makeThread();
+        }
+    }
+
+    void ThreadPool::makeThread() {
+        std::lock_guard<std::mutex> lock(this->mtx);
+        this->threads.push_back(this->factory.create(&this->taskQueue, &this->activateSiz));
+    }
+
+    void ThreadPool::execute(Runnable *runnable) noexcept {
+        Task *task = new Task(runnable);
+        this->taskQueue.push(task);
     }
 
     template<class T>
-    std::future<T> ThreadPool::submit(Callable<T> &task) const noexcept {
+    std::future<T> ThreadPool::submit(Callable<T> &task) const noexcept {}
 
+    void ThreadPool::join() {
+        for (const auto &thread: this->threads) {
+            thread->join();
+        }
     }
 
-    void ThreadPool::shutdown() noexcept {}
-
-    void ThreadPool::join() noexcept {}
+    void ThreadPool::shutdown() {
+        for (const auto &thread: this->threads) {
+            thread->shutdown();
+        }
+    }
 
     int ThreadPool::getCoreSize() const {
         return this->coreSize;
@@ -47,13 +54,5 @@ namespace simpleThread {
 
     int ThreadPool::getActiveSize() const {
         return this->activateSiz;
-    }
-
-    void ThreadPool::createThread() {
-        for (int i = 0; i < this->coreSize; ++i) {
-            // auto process = new Process(&this->taskQueue);
-
-            // this->threads.emplace_back();
-        }
     }
 }

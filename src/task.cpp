@@ -1,17 +1,12 @@
 #include "task.h"
 
 namespace simpleThread {
-    void Task::setType(taskKind kind) {
-        Task::type = kind;
+    Task::Task(Runnable *runnable) : runnable(runnable) {
+        this->type = taskKind::runnable;
     }
 
     taskKind Task::getType() const {
         return this->type;
-    }
-
-    void Task::setRunnable(Runnable *run) {
-        this->setType(taskKind::runnable);
-        Task::runnable = run;
     }
 
     Runnable *Task::getRunnable() const {

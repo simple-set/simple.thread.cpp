@@ -3,19 +3,19 @@
 
 namespace simpleThread {
     auto STLThread::getId() {
-        return this->work.get_id();
+        return this->workThread.get_id();
     }
 
     void STLThread::join() {
-        if (this->work.joinable()) {
+        if (this->workThread.joinable()) {
             this->process.setDone();
-            this->work.join();
+            this->workThread.join();
         }
     }
 
     void STLThread::setDaemon() {
-        if (this->work.joinable()) {
-            this->work.detach();
+        if (this->workThread.joinable()) {
+            this->workThread.detach();
         }
     }
 
@@ -28,16 +28,16 @@ namespace simpleThread {
 
     STLThread::STLThread(TaskQueue *queue, std::atomic_int *counter) : queue(queue), counter(counter) {
         this->process.setQueue(queue);
-        this->createThread();
-    }
-
-    void STLThread::createThread() {
-        this->work = std::move(std::thread(&STLThread::start, std::ref(*this)));
+        this->start();
     }
 
     void STLThread::start() {
-        if (this->counter != nullptr) {this->counter->store(1);}
+        this->workThread = std::move(std::thread(&STLThread::execute, std::ref(*this)));
+    }
+
+    void STLThread::execute() {
+        if (this->counter != nullptr) {this->counter->fetch_add(1);}
         this->process.work();
-        if (this->counter != nullptr) {this->counter->store(1);}
+        if (this->counter != nullptr) {this->counter->fetch_sub(1);}
     }
 }

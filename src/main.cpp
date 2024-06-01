@@ -5,6 +5,7 @@
 #include <thread>
 #include "STL_thread.h"
 #include "thread_factory.h"
+#include "thread_pool.h"
 
 
 class Test : public simpleThread::Runnable {
@@ -19,16 +20,15 @@ public:
 
 
 int main() {
-    Test test;
-    simpleThread::Task task{};
-    task.setRunnable(&test);
+//    Test test;
+//    simpleThread::Task task(&test);
 
-    simpleThread::TaskQueue queue;
-    queue.push(&task);
+//    simpleThread::TaskQueue queue;
+//    queue.push(&task);
 
     // auto process = simpleThread::Process();
     // process.setQueue(&queue);
-    // process.work();
+    // process.workThread();
     // process.setDone();
 
 //    simpleThread::STLThread thread(&queue);
@@ -36,12 +36,18 @@ int main() {
 //    thread.shutdown();
 //    thread.join();
 
-    simpleThread::ThreadFactory factory;
-    auto thread = factory.create(&queue, nullptr);
+//    simpleThread::ThreadFactory factory;
+//    auto thread = factory.create(&queue, nullptr);
 //    thread->shutdown();
-    thread->join();
-    delete thread;
+//    thread->join();
+//    delete thread;
 
-    //
-    // return 0;
+
+    Test test;
+    simpleThread::ThreadPool pool;
+    pool.execute(&test);
+    pool.execute(&test);
+    pool.join();
+    std::cout << "end" << std::endl;
+     return 0;
 }

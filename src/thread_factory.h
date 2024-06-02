@@ -11,7 +11,7 @@ namespace simpleThread {
     private:
         std::mutex mtx;
     public:
-        STLThread *create(TaskQueue *queue, std::atomic_int *counter) noexcept;
+        STLThread *create(TaskQueue *queue) noexcept;
     };
 }
 

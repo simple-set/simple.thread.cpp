@@ -1,8 +1,8 @@
 #include "thread_factory.h"
 
 namespace simpleThread {
-    STLThread *ThreadFactory::create(TaskQueue *queue, std::atomic_int *counter) noexcept {
+    STLThread *ThreadFactory::create(TaskQueue *queue) noexcept {
         std::lock_guard<std::mutex> lock(this->mtx);
-        return new STLThread(queue, counter);
+        return new STLThread(queue);
     }
 }

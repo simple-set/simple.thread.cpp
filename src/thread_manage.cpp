@@ -82,6 +82,10 @@ namespace simpleThread {
         }
         return threadList;
     }
+
+    bool ThreadManage::getClose() const {
+        return close;
+    }
 }
 
 #pragma clang diagnostic pop

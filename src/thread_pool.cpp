@@ -7,52 +7,45 @@ namespace simpleThread {
     ThreadPool::ThreadPool(int size) : ThreadPool(size, size) {}
 
     // 构造函数, 并创建核心线程数, 线程数必须大于0
-    ThreadPool::ThreadPool(int coreSize, int maxSize) : coreSize(coreSize), maxSize(maxSize) {
-        if (this->coreSize <= 0) {
-            this->coreSize = cpuCount();
+    ThreadPool::ThreadPool(int coreSize, int maxSize): threadManage(coreSize, maxSize, &taskQueue) {
+        if (coreSize <= 0) {
+            this->threadManage.setCoreSize(coreSize);
         }
-        if (this->maxSize <= 0 || this->maxSize < this->coreSize) {
-            this->maxSize = this->coreSize;
+        if (maxSize <= 0 || maxSize < coreSize) {
+            this->threadManage.setMaxSize(maxSize);
         }
-        this->initThread();
-    }
-
-    void ThreadPool::initThread() {
-        for (int i = 0; i < this->coreSize; ++i) {
-            this->makeThread();
-        }
-    }
-
-    void ThreadPool::makeThread() {
-        std::lock_guard<std::mutex> lock(this->mtx);
-        this->threads.push_back(this->factory.create(&this->taskQueue, &this->activateSiz));
+        this->threadManage.initThreads();
     }
 
     void ThreadPool::execute(Runnable *runnable) noexcept {
+        if (this->threadManage.getClose()) {
+            // 线程池已关闭,丢弃任务
+            return;
+        }
         Task *task = new Task(runnable);
         this->taskQueue.push(task);
     }
 
     template<class T>
-    std::future<T> ThreadPool::submit(Callable<T> &task) const noexcept {}
+    std::future<T> ThreadPool::submit() const noexcept {}
 
     void ThreadPool::join() {
-        for (const auto &thread: this->threads) {
-            thread->join();
-        }
+        this->threadManage.join();
     }
 
     void ThreadPool::shutdown() {
-        for (const auto &thread: this->threads) {
-            thread->shutdown();
-        }
+        this->threadManage.shutdown();
     }
 
     int ThreadPool::getCoreSize() const {
-        return this->coreSize;
+        return this->threadManage.getCoreSize();
     }
 
     int ThreadPool::getActiveSize() const {
-        return this->activateSiz;
+        return this->threadManage.getActivateSiz();
+    }
+
+    int ThreadPool::getMaxSize() const {
+        return this->threadManage.getMaxSize();
     }
 }

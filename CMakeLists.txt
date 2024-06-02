@@ -22,6 +22,8 @@ add_executable(simple_thread_cpp
         src/task_queue.cpp
         src/process.h
         src/process.cpp
+        src/thread_manage.h
+        src/thread_manage.cpp
 )
 
 target_link_libraries(simple_thread_cpp pthread)

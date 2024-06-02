@@ -61,6 +61,8 @@ namespace simpleThread {
         // 关闭线程, 丢弃未完成任务
         void shutdown();
 
+        [[nodiscard]] bool getClose() const;
+
         void setCoreSize(int size);
 
         void setMaxSize(int size);

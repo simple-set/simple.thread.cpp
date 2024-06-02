@@ -2,16 +2,20 @@
 
 namespace simpleThread {
     void TaskQueue::push(Task *task) {
-        std::lock_guard<std::timed_mutex> lock(this->mtx);
-        this->queue.push_back(task);
+        std::unique_lock<std::mutex> lock(this->mtx);
+        this->cv.notify_all();
+        if (!this->close) {
+            this->queue.push_back(task);
+        }
     }
 
     Task *TaskQueue::pull() {
-        std::unique_lock<std::timed_mutex> lock(this->mtx, std::defer_lock);
-        if (lock.try_lock_for(std::chrono::milliseconds(this->PULL_WAIT))) {
-            return this->popTask();
+        std::unique_lock<std::mutex> lock(this->mtx);
+        Task *task = this->popTask();
+        if (task == nullptr && !this->close) {
+            this->cv.wait_for(lock, std::chrono::milliseconds(this->PULL_WAIT));
         }
-        return nullptr;
+        return task;
     }
 
     Task *TaskQueue::popTask() noexcept {
@@ -24,11 +28,21 @@ namespace simpleThread {
     }
 
     void TaskQueue::reset() {
-        std::lock_guard<std::timed_mutex> lock(this->mtx);
+        std::lock_guard<std::mutex> lock(this->mtx);
         this->queue.clear();
     }
 
     unsigned long TaskQueue::size() {
         return this->queue.size();
+    }
+
+    bool TaskQueue::getClose() const {
+        return close;
+    }
+
+    void TaskQueue::setClose() {
+        std::unique_lock<std::mutex> lock(this->mtx);
+        this->cv.notify_all();
+        TaskQueue::close = true;
     }
 }

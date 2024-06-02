@@ -32,14 +32,11 @@ namespace simpleThread {
         // 不管队列状态，立即退出执行
         bool volatile exit = false;
 
-        // 任务轮训间隔时间(毫秒)
-        int const WAIT_TIME = 50;
-
         // 空闲退出时间(秒)
         int const IDLE_EXIT_TIME = 60;
 
         // 线程最近执行时间戳
-        long executeTime = std::time(nullptr);
+        time_t executeTime = std::time(nullptr);
 
         // 线程空闲时间
         bool freeTime() const;

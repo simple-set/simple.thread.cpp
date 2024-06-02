@@ -27,6 +27,10 @@ namespace simpleThread {
     }
 
     void ThreadManage::addThread() {
+        if (this->close) {
+            // 线程池已关闭,丢弃任务
+            return;
+        }
         std::lock_guard<std::recursive_mutex> lock(this->mtx);
         STLThread *thread = this->makeThread();
         this->threads.insert(std::make_pair(thread->getId(), thread));

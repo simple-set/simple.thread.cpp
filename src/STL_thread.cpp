@@ -34,7 +34,6 @@ namespace simpleThread {
                 // 完成任务并退出线程
                 return;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(this->WAIT_TIME));
         }
     }
 
@@ -81,7 +80,7 @@ namespace simpleThread {
     }
 
     bool STLThread::freeTime() const {
-        return (std::time(nullptr) - this->executeTime) - this->IDLE_EXIT_TIME;
+        return (std::time(nullptr) - this->executeTime) > this->IDLE_EXIT_TIME;
     }
 
     void STLThread::setRemoveThread(const std::function<void(STLThread *)> &function) {

@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <mutex>
+#include <condition_variable>
 #include "task.h"
 
 namespace simpleThread {
@@ -10,10 +11,18 @@ namespace simpleThread {
     private:
         // 任务队列
         std::deque<Task *> queue;
+
+        // 关闭标志位
+        bool volatile close = false;
+
         // 任务读写锁
-        std::timed_mutex mtx;
+        std::mutex mtx;
+
+        // 条件变量
+        std::condition_variable cv;
+
         // 获取阻塞时间(毫秒)
-        int const PULL_WAIT = 50;
+        int const PULL_WAIT = 2000;
 
         Task *popTask() noexcept;
 
@@ -21,6 +30,10 @@ namespace simpleThread {
         void push(Task *task);
 
         Task *pull();
+
+        [[nodiscard]] bool getClose() const;
+
+        void setClose();
 
         void reset();
 

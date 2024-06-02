@@ -13,10 +13,9 @@ class Test : public simpleThread::Runnable {
 public:
     void run() override {
         std::cout << "tid: " << std::this_thread::get_id() << ", Runnable, test" << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 };
-
 
 int main() {
 //    Test test;
@@ -52,10 +51,12 @@ int main() {
 
 
     Test test;
-    simpleThread::ThreadPool pool;
-    pool.execute(&test);
-    pool.execute(&test);
+    simpleThread::ThreadPool pool(4, 16);
+    for (int i = 0; i < 100; ++i) {
+        pool.execute(&test);
+    }
     pool.join();
-    std::cout << "end" << std::endl;
+    pool.shutdown();
+    std::cout << "end"  << std::endl;
     return 0;
 }

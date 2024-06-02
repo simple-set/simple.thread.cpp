@@ -20,8 +20,6 @@ add_executable(simple_thread_cpp
         src/STL_thread.h
         src/task_queue.h
         src/task_queue.cpp
-        src/process.h
-        src/process.cpp
         src/thread_manage.h
         src/thread_manage.cpp
 )

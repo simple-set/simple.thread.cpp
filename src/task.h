@@ -1,10 +1,13 @@
 #ifndef SIMPLE_THREAD_CPP_TASK_H
 #define SIMPLE_THREAD_CPP_TASK_H
 
+#include <functional>
+
 namespace simpleThread {
     enum class taskKind {
         runnable,
-        callable
+        callable,
+        function
     };
 
     class Runnable {
@@ -21,14 +24,20 @@ namespace simpleThread {
     class Task {
     private:
         taskKind type;
-        Runnable *runnable;
+        Runnable *runnable{};
+        std::function<void()> function;
 
     public:
-        explicit Task(Runnable *runnable);
+        explicit Task(Runnable *);
+
+        explicit Task(std::function<void()>);
 
         [[nodiscard]] taskKind getType() const;
 
         [[nodiscard]] Runnable *getRunnable() const;
+
+        [[nodiscard]] const std::function<void()> &getFunction() const;
+
     };
 }
 

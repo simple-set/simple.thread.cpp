@@ -17,16 +17,29 @@ namespace simpleThread {
         this->threadManage.initThreads();
     }
 
-    void ThreadPool::execute(Runnable *runnable) noexcept {
+    bool ThreadPool::perExecute() {
         if (this->threadManage.getClose() || this->taskQueue.getClose()) {
             // 线程池已关闭,丢弃任务
-            return;
+            return false;
         }
-        Task *task = new Task(runnable);
         if (this->threadManage.getActivateSiz() < this->threadManage.getMaxSize()) {
             this->threadManage.addThread();
         }
-        this->taskQueue.push(task);
+        return true;
+    }
+
+    void ThreadPool::execute(Runnable *runnable) noexcept {
+        if (this->perExecute()) {
+            Task *task = new Task(runnable);
+            this->taskQueue.push(task);
+        }
+    }
+
+    void ThreadPool::execute(const std::function<void()>& function) noexcept {
+        if (this->perExecute()) {
+            Task *task = new Task(function);
+            this->taskQueue.push(task);
+        }
     }
 
     template<class T>

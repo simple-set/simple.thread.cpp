@@ -41,7 +41,10 @@ namespace simpleThread {
         try {
             if (task->getType() == taskKind::runnable) {
                 task->getRunnable()->run();
+            } else if (task->getType() == taskKind::function) {
+                task->getFunction()();
             }
+            delete task;
         } catch (std::exception &e) {
             std::cerr << "err: " << e.what() << std::endl;
         }

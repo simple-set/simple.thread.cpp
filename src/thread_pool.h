@@ -19,6 +19,9 @@ namespace simpleThread {
         // 任务队列
         TaskQueue taskQueue;
 
+        // 执行任务预处理
+        bool perExecute();
+
     public:
         ThreadPool();
 
@@ -27,7 +30,9 @@ namespace simpleThread {
         explicit ThreadPool(int coreSize, int maxSize);
 
         // 提交任务
-        void execute(simpleThread::Runnable *runnable) noexcept;
+        void execute(simpleThread::Runnable *) noexcept;
+
+        void execute(const std::function<void()> &) noexcept;
 
         // 提交任务, 可异步获取结果
         template<class T>

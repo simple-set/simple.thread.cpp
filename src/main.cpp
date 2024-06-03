@@ -16,6 +16,10 @@ public:
     }
 };
 
+time_t getTime() {
+    return std::time(nullptr);
+}
+
 int main() {
 //    Test test;
 //    simpleThread::Task task(&test);
@@ -49,14 +53,18 @@ int main() {
 //    threadManage.shutdown();
 
 
-    Test test;
-    simpleThread::ThreadPool pool(4, 16);
-    for (int i = 0; i < 100; ++i) {
-//        pool.execute(&test);
-        pool.execute([object = &test] { object->run(); });
-    }
-    pool.join();
-    pool.shutdown();
+    // Test test;
+    // simpleThread::ThreadPool pool(1, 16);
+    // for (int i = 0; i < 100; ++i) {
+    //     pool.execute([object = &test] { object->run(); });
+    // }
+    // pool.join();
+    // pool.shutdown();
+
+
+    simpleThread::ThreadPool pool(1);
+    auto result = pool.submit<time_t>(&getTime);
+    std::cout << "result: " << result.get() << std::endl;
     std::cout << "end"  << std::endl;
     return 0;
 }

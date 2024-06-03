@@ -45,6 +45,28 @@ namespace simpleThread {
     template<class T>
     std::future<T> ThreadPool::submit() const noexcept {}
 
+    template<class T>
+    std::future<T> ThreadPool::submit(const std::function<T()> &function) noexcept {
+        std::promise<T> promise;
+        promise.set_value(function());
+        return promise.get_future();
+
+        // if (this->perExecute()) {
+        //     std::promise<T> promise;
+        //     // std::future<T> future = promise.get_future();
+        //     // auto pFunction = [promise, function]() {promise.set_value(function());};
+        //     // Task *task = new Task(pFunction);
+        //
+        //     Task *task = new Task([promise, function]() {promise.set_value(function());});
+        //
+        //     this->taskQueue.push(task);
+        //
+        //     // return future;
+        //     return promise.get_future();
+        //     // return std::future<T>();
+        // }
+    }
+
     void ThreadPool::join() {
         this->taskQueue.setClose();
         this->threadManage.join();

@@ -38,6 +38,9 @@ namespace simpleThread {
         template<class T>
         std::future<T> submit() const noexcept;
 
+        template<class T>
+        std::future<T> submit(const std::function<T()> &) noexcept;
+
         // 阻塞线程池, 等待所有任务完成
         void join();
 

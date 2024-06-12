@@ -23,6 +23,11 @@ void MyPrintf(const std::string& data) {
     printf("%s\n", data.c_str());
 }
 
+std::thread::id getTid() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    return std::this_thread::get_id();
+}
+
 template<class F, class... Args>
 void execute(F &&f, Args &&... args) {
    // using return_type = typename std::result_of<F(Args...)>::type;
@@ -67,13 +72,19 @@ int main() {
 //    threadManage.shutdown();
 
 
-     Test test;
-     simpleThread::ThreadPool pool(4, 16);
-     for (int i = 0; i < 100; ++i) {
-         pool.execute([object = &test] { object->run(); });
-     }
-     pool.join();
+//     Test test;
+//     simpleThread::ThreadPool pool(4, 16);
+//     for (int i = 0; i < 100; ++i) {
+//         pool.execute([object = &test] { object->run(); });
+//     }
+//     pool.join();
 //    std::this_thread::sleep_for(std::chrono::seconds(1));
 //     pool.shutdown();
+
+
+    simpleThread::ThreadPool pool(1, 2);
+    auto result = pool.submit(getTid);
+    std::cout << "tid: " << result.get() << std::endl;
+    pool.join();
     return 0;
 }

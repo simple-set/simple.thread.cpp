@@ -10,7 +10,7 @@ namespace simpleThread {
     class TaskQueue {
     private:
         // 任务队列
-        std::deque<Task *> queue;
+        std::deque<std::function<void()>> queue;
 
         // 关闭标志位
         bool volatile close = false;
@@ -24,12 +24,12 @@ namespace simpleThread {
         // 获取阻塞时间(毫秒)
         int const PULL_WAIT = 2000;
 
-        Task *popTask() noexcept;
+        std::function<void()> popTask() noexcept;
 
     public:
-        void push(Task *task);
+        void push(const std::function<void()>&);
 
-        Task *pull();
+        std::function<void()> pull();
 
         [[nodiscard]] bool getClose() const;
 

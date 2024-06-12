@@ -28,22 +28,40 @@ namespace simpleThread {
         return true;
     }
 
-    void ThreadPool::execute(Runnable *runnable) noexcept {
-        if (this->perExecute()) {
-            Task *task = new Task(runnable);
-            this->taskQueue.push(task);
-        }
-    }
+    // void ThreadPool::execute(Runnable *runnable) noexcept {
+    //     if (this->perExecute()) {
+    //         Task *task = new Task(runnable);
+    //         this->taskQueue.push(task);
+    //     }
+    // }
+    //
+    // void ThreadPool::execute(const std::function<void()>& function) noexcept {
+    //     if (this->perExecute()) {
+    //         Task *task = new Task(function);
+    //         this->taskQueue.push(task);
+    //     }
+    // }
 
-    void ThreadPool::execute(const std::function<void()>& function) noexcept {
-        if (this->perExecute()) {
-            Task *task = new Task(function);
-            this->taskQueue.push(task);
-        }
-    }
+    // template<class T, class ...E>
+    // void ThreadPool::execute(T &&func, E &&...args) {
+    //     std::bind(std::forward<T>(func), std::forward<E>(args)...)();
+    // }
 
-    template<class T>
-    std::future<T> ThreadPool::submit() const noexcept {}
+    // template<class F, class... Args>
+    // void ThreadPool::execute(F &&f, Args &&... args) {
+        // using return_type = typename std::result_of<F(Args...)>::type;
+        // std::packaged_task<return_type()> task(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+        // std::future<return_type> res = task.get_future();
+
+        // task();
+        // return res;
+        //  std::packaged_task<return_type()> task(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+        // auto call = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
+        // call();
+    // }
+
+    // template<class T>
+    // std::future<T> ThreadPool::submit() const noexcept {}
 
     void ThreadPool::join() {
         this->taskQueue.setClose();

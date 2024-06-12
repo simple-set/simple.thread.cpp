@@ -30,13 +30,24 @@ namespace simpleThread {
         explicit ThreadPool(int coreSize, int maxSize);
 
         // 提交任务
-        void execute(simpleThread::Runnable *) noexcept;
+        // void execute(simpleThread::Runnable *) noexcept;
 
-        void execute(const std::function<void()> &) noexcept;
+        // void execute(const std::function<void()> &) noexcept;
+
+        // 执行任务
+        // template<class T, class... E>
+        // void execute(T &&f, E &&... args);
+
+        template<class F, class... Args>
+        void execute(F &&f, Args &&... args) noexcept {
+            auto call = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
+
+            call();
+        }
 
         // 提交任务, 可异步获取结果
-        template<class T>
-        std::future<T> submit() const noexcept;
+        // template<class T>
+        // std::future<T> submit() const noexcept;
 
         // 阻塞线程池, 等待所有任务完成
         void join();

@@ -18,23 +18,23 @@ namespace simpleThread {
     }
 
     void STLThread::execute() {
-        while (!this->exit) {
-            Task *task = this->queue->pull();
-
-            if (task != nullptr) {
-                STLThread::work(task);
-                this->executeTime = std::time(nullptr);
-                continue;
-            }
-            if (this->waitTimeout()) {
-                // 超过空闲时间且活动线程大于核心线程数, 退出当前线程
-                return;
-            }
-            if (this->done && this->queue->size() <= 0) {
-                // 完成任务并退出线程
-                return;
-            }
-        }
+        // while (!this->exit) {
+        //     Task *task = this->queue->pull();
+        //
+        //     if (task != nullptr) {
+        //         STLThread::work(task);
+        //         this->executeTime = std::time(nullptr);
+        //         continue;
+        //     }
+        //     if (this->waitTimeout()) {
+        //         // 超过空闲时间且活动线程大于核心线程数, 退出当前线程
+        //         return;
+        //     }
+        //     if (this->done && this->queue->size() <= 0) {
+        //         // 完成任务并退出线程
+        //         return;
+        //     }
+        // }
     }
 
     void STLThread::work(Task *task) noexcept {

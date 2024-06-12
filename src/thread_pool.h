@@ -38,14 +38,14 @@ namespace simpleThread {
 
         // 提交任务, 可异步获取结果
         template<class F, class... Args>
-        auto submit(F &&f, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type> {
+        std::future<typename std::result_of<F(Args...)>::type> submit(F &&f, Args &&... args) {
             using return_type = typename std::result_of<F(Args...)>::type;
 
             auto task = std::make_shared<std::packaged_task<return_type()>>(
                     std::bind(std::forward<F>(f), std::forward<Args>(args)...)
             );
             std::future<return_type> res = task->get_future();
-            this->taskQueue.push([task](){ (*task)(); });
+            this->taskQueue.push([task]() { (*task)(); });
             return res;
         }
 

@@ -54,7 +54,7 @@ namespace simpleThread {
         void execute();
 
         // 执行业务
-        static void work(Task *task) noexcept;
+        static void work(const std::function<void()> &) noexcept;
 
     public:
         explicit STLThread(TaskQueue *);
@@ -67,7 +67,7 @@ namespace simpleThread {
         // 关闭线程, 丢弃未执行的任务
         void shutdown();
 
-        // 分析线程, 设置为daemon模式
+        // 分离线程, 设置为daemon模式
         void setDaemon();
 
         void setRemoveThread(const std::function<void(STLThread *)> &function);

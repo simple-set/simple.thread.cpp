@@ -29,20 +29,11 @@ namespace simpleThread {
 
         explicit ThreadPool(int coreSize, int maxSize);
 
-        // 提交任务
-        // void execute(simpleThread::Runnable *) noexcept;
-
-        // void execute(const std::function<void()> &) noexcept;
-
         // 执行任务
-        // template<class T, class... E>
-        // void execute(T &&f, E &&... args);
-
         template<class F, class... Args>
         void execute(F &&f, Args &&... args) noexcept {
             auto call = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-
-            call();
+            this->taskQueue.push([call]{call();});
         }
 
         // 提交任务, 可异步获取结果

@@ -1,7 +1,6 @@
 #include <iostream>
 #include "task.h"
 #include "task_queue.h"
-//#include <thread>
 #include "STL_thread.h"
 #include "thread_factory.h"
 #include "thread_pool.h"
@@ -38,17 +37,17 @@ void execute(F &&f, Args &&... args) {
 }
 
 int main() {
-   Test test;
+//   Test test;
 //    simpleThread::Task task(&test);
 
-   simpleThread::TaskQueue queue;
-   queue.push([obj=&test](){obj->run();});
-   queue.push([]{MyEcho();});
-   auto task1 = queue.pull();
-   auto task2 = queue.pull();
-   auto task3 = queue.pull();
-   task1();
-   task2();
+//   simpleThread::TaskQueue queue;
+//   queue.push([obj=&test](){obj->run();});
+//   queue.push([]{MyEcho();});
+//   auto task1 = queue.pull();
+//   auto task2 = queue.pull();
+//   auto task3 = queue.pull();
+//   task1();
+//   task2();
 
 //    simpleThread::STLThread thread(&queue);
 //    thread.join();
@@ -56,7 +55,7 @@ int main() {
 //    thread.shutdown();
 
 //    simpleThread::ThreadFactory factory;
-//    auto thread = factory.create(&queue, nullptr);
+//    auto thread = factory.create(&queue);
 //    thread->shutdown();
 //    thread->join();
 //    delete thread;
@@ -68,23 +67,13 @@ int main() {
 //    threadManage.shutdown();
 
 
-    // Test test;
-    // simpleThread::ThreadPool pool(4, 16);
-    // pool.execute(MyEcho);
-    // pool.execute([object = &test](){object->run();});
-    // pool.execute(MyPrintf, "test");
-    // for (int i = 0; i < 100; ++i) {
-//        pool.execute(&test);
-//         pool.execute([object = &test] { object->run(); });
-//     }
-    // pool.join();
-    // pool.shutdown();
-    // pool.execute([object = &test](){object->run();});
-    // pool.execute(MyEcho);
-    // std::cout << "end"  << std::endl;
-
-    // execute([object = &test](){object->run();});
-    // execute(MyEcho);
-    // execute(MyPrintf, "test");
+     Test test;
+     simpleThread::ThreadPool pool(4, 16);
+     for (int i = 0; i < 100; ++i) {
+         pool.execute([object = &test] { object->run(); });
+     }
+     pool.join();
+//    std::this_thread::sleep_for(std::chrono::seconds(1));
+//     pool.shutdown();
     return 0;
 }

@@ -29,14 +29,25 @@ namespace simpleThread {
 
         explicit ThreadPool(int coreSize, int maxSize);
 
-        // 提交任务
-        void execute(simpleThread::Runnable *) noexcept;
-
-        void execute(const std::function<void()> &) noexcept;
+        // 执行任务
+        template<class F, class... Args>
+        void execute(F &&f, Args &&... args) noexcept {
+            auto call = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
+            this->taskQueue.push([call] { call(); });
+        }
 
         // 提交任务, 可异步获取结果
-        template<class T>
-        std::future<T> submit() const noexcept;
+        template<class F, class... Args>
+        auto submit(F &&f, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type> {
+            using return_type = typename std::result_of<F(Args...)>::type;
+
+            auto task = std::make_shared<std::packaged_task<return_type()>>(
+                    std::bind(std::forward<F>(f), std::forward<Args>(args)...)
+            );
+            std::future<return_type> res = task->get_future();
+            this->taskQueue.push([task](){ (*task)(); });
+            return res;
+        }
 
         template<class T>
         std::future<T> submit(const std::function<T()> &) noexcept;

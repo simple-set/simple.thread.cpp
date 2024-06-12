@@ -8,8 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(simple_thread_cpp
         src/main.cpp
-        src/task.cpp
-        src/task.h
         src/thread_factory.cpp
         src/thread_factory.h
         src/thread_pool.cpp

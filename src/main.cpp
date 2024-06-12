@@ -1,5 +1,4 @@
 #include <iostream>
-#include "task.h"
 #include "task_queue.h"
 #include "STL_thread.h"
 #include "thread_factory.h"
@@ -7,9 +6,9 @@
 #include "thread_manage.h"
 
 
-class Test : public simpleThread::Runnable {
+class Test  {
 public:
-    void run() override {
+    void run() {
         std::cout << "tid: " << std::this_thread::get_id() << ", Runnable, test" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

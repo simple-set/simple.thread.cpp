@@ -37,15 +37,15 @@ namespace simpleThread {
 
         // 提交任务, 可异步获取结果
         template<class F, class... Args>
-        std::future<typename std::result_of<F(Args...)>::type> submit(F &&f, Args &&... args) {
-            using return_type = typename std::result_of<F(Args...)>::type;
+        auto submit(F &&f, Args &&... args) {
+            auto call = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
 
-            auto task = std::make_shared<std::packaged_task<return_type()>>(
-                    std::bind(std::forward<F>(f), std::forward<Args>(args)...)
-            );
-            std::future<return_type> res = task->get_future();
+            using return_type = typename std::invoke_result_t<F, Args...>;
+            auto task = std::make_shared<std::packaged_task<return_type()>>(call);
+
+            auto future_result = task->get_future();
             this->taskQueue.push([task]() { (*task)(); });
-            return res;
+            return future_result;
         }
 
         // 阻塞线程池, 等待所有任务完成

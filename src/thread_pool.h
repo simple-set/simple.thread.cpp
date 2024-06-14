@@ -31,8 +31,7 @@ namespace simpleThread {
         // 执行任务
         template<class F, class... Args>
         void execute(F &&f, Args &&... args) noexcept {
-            auto call = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-            this->taskQueue.push([call] { call(); });
+            this->submit(std::forward<F>(f), std::forward<Args>(args)...);
         }
 
         // 提交任务, 可异步获取结果

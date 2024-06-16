@@ -43,17 +43,17 @@ namespace simpleThread {
         STLThread* makeThread();
 
         // 销毁线程
-        void destroyThread(STLThread&);
+        void destroyThread();
 
         // 移出工作线程
         bool removeThread(STLThread &thread);
 
-        // 是否移出工作线程
-        bool isRemoveThread(STLThread &thread);
+        // 线程是否空闲超时
+        bool threadTimeout(STLThread &thread) const;
 
     public:
-        // 构造函数
         ThreadManage(int coreSize, int maxSize, TaskQueue *queue);
+        ~ThreadManage();
 
         // 初始化线程, 创建核心线程数
         void initThreads();

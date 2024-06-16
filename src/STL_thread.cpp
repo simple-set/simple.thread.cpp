@@ -9,10 +9,11 @@ namespace simpleThread {
     STLThread::STLThread(TaskQueue *queue, const std::string &name) : queue(queue) {
         this->workThread = std::thread(&STLThread::start, std::ref(*this));
         this->threadName = this->makeThreadName(name);
-        std::cout << "create thread: " << this->threadName << std::endl;
+        this->threadId = this->workThread.get_id();
     }
 
     void STLThread::start() {
+        std::cout << "create thread: " << this->threadName << std::endl;
         this->execute();
         std::cout << "destroy  thread: " << this->threadName << std::endl;
     }
@@ -26,12 +27,7 @@ namespace simpleThread {
                 this->executeTime = std::time(nullptr);
                 continue;
             }
-            if (this->isShutdown()) {
-                // 退出线程
-                return;
-            }
-            if (this->done && this->queue->size() <= 0) {
-                // 完成任务并退出线程
+            if (this->isContinue()) {
                 return;
             }
         }
@@ -46,7 +42,7 @@ namespace simpleThread {
     }
 
     std::thread::id STLThread::getId() {
-        return this->workThread.get_id();
+        return this->threadId;
     }
 
     void STLThread::join() {
@@ -54,11 +50,11 @@ namespace simpleThread {
         if (this->workThread.joinable()) {
             this->workThread.join();
         }
+        this->setExit(true);
     }
 
-    void STLThread::setShutdown() {
-        this->exit = true;
-        this->setDaemon();
+    void STLThread::shutdown() {
+        this->setExit(true);
     }
 
     void STLThread::setDaemon() {
@@ -67,11 +63,12 @@ namespace simpleThread {
         }
     }
 
-    bool STLThread::isShutdown() {
+    bool STLThread::isContinue() {
         if (this->removeThread != nullptr && this->removeThread(*this)) {
-            // 已关闭的线程, 设置退出状态, 等待回收
-            this->exit = true;
-            this->setDaemon();
+            this->setExit(true);
+            return true;
+        }
+        if (this->done && this->queue->size() <= 0) {
             return true;
         }
         return false;
@@ -92,15 +89,16 @@ namespace simpleThread {
     }
 
     STLThread::~STLThread() {
-        std::cout << "~STLThread" << std::endl;
+        std::cout << "~STLThread: " << this->threadName << std::endl;
     }
 
     volatile bool STLThread::getExit() const {
         return this->exit;
     }
 
-    volatile bool STLThread::getShutdown() const {
-        return shutdown;
+    void STLThread::setExit(volatile bool exit) {
+        this->setDaemon();
+        STLThread::exit = exit;
     }
 }
 #pragma clang diagnostic pop

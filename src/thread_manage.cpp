@@ -13,14 +13,15 @@ namespace simpleThread {
         return thread;
     }
 
-    void ThreadManage::destroyThread(simpleThread::STLThread &thread) {
-        for (const auto &item: this->getThreadList()) {
-            if (std::this_thread::get_id() == item->getId()) {
+    void ThreadManage::destroyThread() {
+        for (const auto &thread: this->getThreadList()) {
+            if (std::this_thread::get_id() == thread->getId()) {
                 continue;
             }
-            if (item->getExit()) {
-                this->threads.erase(item->getId());
-                delete item;
+            if (thread->getExit()) {
+                this->threads.erase(thread->getId());
+                this->activateSiz--;
+                delete thread;
             }
         }
     }
@@ -45,20 +46,16 @@ namespace simpleThread {
 
     bool ThreadManage::removeThread(STLThread &thread) {
         std::lock_guard<std::recursive_mutex> lock(this->mtx);
-        // 销毁已经退出的线程
-        this->destroyThread(thread);
-        return this->isRemoveThread(thread);
+        this->destroyThread();
+        return this->threadTimeout(thread);
     }
 
-    bool ThreadManage::isRemoveThread(simpleThread::STLThread &thread) {
-        if (!this->threads.count(thread.getId())) {
-            return false;
-        }
+    bool ThreadManage::threadTimeout(simpleThread::STLThread &thread) const {
         if (activateSiz > coreSize && (std::time(nullptr) - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
             // 线程空闲时间过长且大于核心线程数
             return true;
         }
-        if (thread.getShutdown()) {
+        if (thread.getExit()) {
             // 线程已经关闭
             return true;
         }
@@ -96,7 +93,7 @@ namespace simpleThread {
         this->close = true;
         std::lock_guard<std::recursive_mutex> lock(this->mtx);
         for (const auto &thread: this->getThreadList()) {
-            thread->setShutdown();
+            thread->shutdown();
         }
     }
 
@@ -111,6 +108,10 @@ namespace simpleThread {
 
     bool ThreadManage::getClose() const {
         return close;
+    }
+
+    ThreadManage::~ThreadManage() {
+        this->destroyThread();
     }
 }
 

@@ -17,19 +17,19 @@ namespace simpleThread {
         // 任务队列
         TaskQueue *queue;
 
-        // 阻塞线程, 等待所有任务完成后退出线程
+        // 阻塞线程, 等待所有任务完成
         bool volatile done = false;
 
-        // 关闭线程, 不在执行新任务, 等待退出
-        bool volatile shutdown = false;
-
-        // 退出线程, 等待回收
+        // 退出线程
         bool volatile exit = false;
 
         // 线程名称
         std::string threadName;
 
-        // 线程最近执行时间戳
+        // 线程id
+        std::thread::id threadId;
+
+        // 线程最近执行时间戳, 用于空闲回收
         time_t executeTime = std::time(nullptr);
 
         // 生成线程名称
@@ -44,7 +44,10 @@ namespace simpleThread {
         // 执行队列任务
         void execute();
 
-        bool isShutdown();
+        bool isContinue();
+
+        // 分离线程, 设置为daemon模式
+        void setDaemon();
 
         // 执行业务
         static void work(const std::function<void()> &) noexcept;
@@ -61,16 +64,13 @@ namespace simpleThread {
         void join();
 
         // 关闭线程, 丢弃未执行的任务
-        void setShutdown();
-
-        // 分离线程, 设置为daemon模式
-        void setDaemon();
+        void shutdown();
 
         void setRemoveThread(const std::function<bool(STLThread &)> &function);
 
-        volatile bool getExit() const;
+        void setExit(volatile bool exit);
 
-        volatile bool getShutdown() const;
+        volatile bool getExit() const;
     };
 }
 

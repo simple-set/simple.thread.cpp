@@ -19,7 +19,7 @@ namespace simpleThread {
         TaskQueue taskQueue;
 
         // 执行任务预处理
-        bool perExecute();
+        bool canExecute();
 
     public:
         ThreadPool();
@@ -43,7 +43,9 @@ namespace simpleThread {
             auto task = std::make_shared<std::packaged_task<return_type()>>(call);
 
             auto future_result = task->get_future();
-            this->taskQueue.push([task]() { (*task)(); });
+            if (this->canExecute()) {
+                this->taskQueue.push([task]() { (*task)(); });
+            }
             return future_result;
         }
 

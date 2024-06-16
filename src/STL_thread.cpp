@@ -6,10 +6,10 @@
 #pragma clang diagnostic ignored "-Wshadow"
 namespace simpleThread {
 
-    STLThread::STLThread(TaskQueue *queue, const std::string& name) : queue(queue)  {
+    STLThread::STLThread(TaskQueue *queue, const std::string &name) : queue(queue) {
         this->workThread = std::move(std::thread(&STLThread::start, std::ref(*this)));
         this->threadName = this->makeThreadName(name);
-        std::cout << "Create thread: " << this->threadName << std::endl;
+        std::cout << "create thread: " << this->threadName << std::endl;
     }
 
     void STLThread::start() {
@@ -26,8 +26,7 @@ namespace simpleThread {
                 this->executeTime = std::time(nullptr);
                 continue;
             }
-            if (this->isContinue()) {
-                // 线程持续继续执行
+            if (this->isExit()) {
                 return;
             }
             if (this->done && this->queue->size() <= 0) {
@@ -67,48 +66,22 @@ namespace simpleThread {
         }
     }
 
-    bool STLThread::isContinue() {
+    bool STLThread::isExit() {
         if (this->removeThread != nullptr) {
             return this->removeThread(*this);
         }
-        return true;
+        return false;
     }
 
-//    bool STLThread::waitTimeout() const {
-//        if (coreSize == nullptr || maxSize == nullptr || activateSiz == nullptr) {
-//            return false;
-//        }
-//        if (this->freeTime() && *activateSiz > *coreSize) {
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    bool STLThread::freeTime() const {
-//        return (std::time(nullptr) - this->executeTime) > this->IDLE_EXIT_TIME;
-//    }
-
-    void STLThread::setRemoveThread(const std::function<bool(STLThread&)> function) {
+    void STLThread::setRemoveThread(const std::function<bool(STLThread &)> &function) {
         STLThread::removeThread = function;
-    }
-
-    void STLThread::setCoreSize(const int *size) {
-        STLThread::coreSize = size;
-    }
-
-    void STLThread::setMaxSize(const int *size) {
-        STLThread::maxSize = size;
-    }
-
-    void STLThread::setActivateSiz(const int *size) {
-        STLThread::activateSiz = size;
     }
 
     time_t STLThread::getExecuteTime() const {
         return executeTime;
     }
 
-    std::string STLThread::makeThreadName(std::string const& prefix) {
+    std::string STLThread::makeThreadName(std::string const &prefix) {
         std::ostringstream oss;
         oss << this->workThread.get_id();
         return prefix + "-" + oss.str();

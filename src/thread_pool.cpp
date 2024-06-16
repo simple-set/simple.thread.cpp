@@ -17,7 +17,7 @@ namespace simpleThread {
         this->threadManage.initThreads();
     }
 
-    bool ThreadPool::perExecute() {
+    bool ThreadPool::canExecute() {
         if (this->threadManage.getClose() || this->taskQueue.getClose()) {
             // 线程池已关闭,丢弃任务
             return false;

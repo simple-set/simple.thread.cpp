@@ -37,6 +37,7 @@ namespace simpleThread {
         if (this->threads.count(thread.getId())) {
             time_t now = std::time(nullptr);
             if (activateSiz > coreSize && (now - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
+                // 线程空闲时间过长且大于核心线程数则退出
                 this->threads.erase(thread.getId());
                 this->activateSiz--;
                 return true;

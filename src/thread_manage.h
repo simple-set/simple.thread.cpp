@@ -35,12 +35,15 @@ namespace simpleThread {
         int const IDLE_EXIT_TIME = 60;
 
         // 工作线程组
-        std::map<std::thread::id, STLThread *> threads;
+        std::map<std::thread::id, STLThread*> threads;
 
         std::vector<STLThread*> getThreadList();
 
         // 创建线程
         STLThread* makeThread();
+
+        // 销毁线程
+        void destroyThread(STLThread&);
 
         // 移出工作线程
         bool removeThread(STLThread &thread);

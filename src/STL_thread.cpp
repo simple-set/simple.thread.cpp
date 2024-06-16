@@ -7,7 +7,7 @@
 namespace simpleThread {
 
     STLThread::STLThread(TaskQueue *queue, const std::string &name) : queue(queue) {
-        this->workThread = std::move(std::thread(&STLThread::start, std::ref(*this)));
+        this->workThread = std::thread(&STLThread::start, std::ref(*this));
         this->threadName = this->makeThreadName(name);
         std::cout << "create thread: " << this->threadName << std::endl;
     }
@@ -26,7 +26,7 @@ namespace simpleThread {
                 this->executeTime = std::time(nullptr);
                 continue;
             }
-            if (this->isExit()) {
+            if (this->isShutdown()) {
                 // 退出线程
                 return;
             }
@@ -56,7 +56,7 @@ namespace simpleThread {
         }
     }
 
-    void STLThread::shutdown() {
+    void STLThread::setShutdown() {
         this->exit = true;
         this->setDaemon();
     }
@@ -67,9 +67,12 @@ namespace simpleThread {
         }
     }
 
-    bool STLThread::isExit() {
-        if (this->removeThread != nullptr) {
-            return this->removeThread(*this);
+    bool STLThread::isShutdown() {
+        if (this->removeThread != nullptr && this->removeThread(*this)) {
+            // 已关闭的线程, 设置退出状态, 等待回收
+            this->exit = true;
+            this->setDaemon();
+            return true;
         }
         return false;
     }
@@ -88,8 +91,16 @@ namespace simpleThread {
         return prefix + "-" + oss.str();
     }
 
+    STLThread::~STLThread() {
+        std::cout << "~STLThread" << std::endl;
+    }
+
     volatile bool STLThread::getExit() const {
-        return exit;
+        return this->exit;
+    }
+
+    volatile bool STLThread::getShutdown() const {
+        return shutdown;
     }
 }
 #pragma clang diagnostic pop

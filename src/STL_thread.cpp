@@ -27,6 +27,7 @@ namespace simpleThread {
                 continue;
             }
             if (this->isExit()) {
+                // 退出线程
                 return;
             }
             if (this->done && this->queue->size() <= 0) {
@@ -85,6 +86,10 @@ namespace simpleThread {
         std::ostringstream oss;
         oss << this->workThread.get_id();
         return prefix + "-" + oss.str();
+    }
+
+    volatile bool STLThread::getExit() const {
+        return exit;
     }
 }
 #pragma clang diagnostic pop

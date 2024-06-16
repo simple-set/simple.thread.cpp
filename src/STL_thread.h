@@ -32,16 +32,16 @@ namespace simpleThread {
         // 生成线程名称
         std::string makeThreadName(std::string const &prefix);
 
-    private:
         // 从管理器中移出线程
         std::function<bool(STLThread &)> removeThread;
 
-        // 启动线程
+        // 启动工作线程
         void start();
 
-        // 执行任务
+        // 执行队列任务
         void execute();
 
+        // 是否退出工作线程
         bool isExit();
 
         // 执行业务
@@ -64,6 +64,8 @@ namespace simpleThread {
         void setDaemon();
 
         void setRemoveThread(const std::function<bool(STLThread &)> &function);
+
+        volatile bool getExit() const;
     };
 }
 

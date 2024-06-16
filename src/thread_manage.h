@@ -23,7 +23,7 @@ namespace simpleThread {
         int maxSize = 0;
 
         // 活跃线程数
-        int activateSiz = 0;
+        int volatile activateSiz = 0;
 
         // 线程任务队列
         TaskQueue *queue = nullptr;
@@ -39,11 +39,14 @@ namespace simpleThread {
 
         std::vector<STLThread*> getThreadList();
 
-        // 线程工厂
-        ThreadFactory factory;
-
         // 创建线程
         STLThread* makeThread();
+
+        // 移出工作线程
+        bool removeThread(STLThread &thread);
+
+        // 是否移出工作线程
+        bool isRemoveThread(STLThread &thread);
 
     public:
         // 构造函数
@@ -54,9 +57,6 @@ namespace simpleThread {
 
         // 增加线程
         void addThread();
-
-        // 移出工作线程
-        bool removeThread(STLThread &thread);
 
         // 等待线程完成任务
         void join();

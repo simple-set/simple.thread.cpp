@@ -33,15 +33,25 @@ namespace simpleThread {
 
     bool ThreadManage::removeThread(STLThread &thread) {
         std::lock_guard<std::recursive_mutex> lock(this->mtx);
+        if (this->isRemoveThread(thread)) {
+            this->threads.erase(thread.getId());
+            this->activateSiz--;
+            return true;
+        }
+        return false;
+    }
 
+    bool ThreadManage::isRemoveThread(simpleThread::STLThread &thread) {
         if (this->threads.count(thread.getId())) {
-            time_t now = std::time(nullptr);
-            if (activateSiz > coreSize && (now - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
-                // 线程空闲时间过长且大于核心线程数则退出
-                this->threads.erase(thread.getId());
-                this->activateSiz--;
-                return true;
-            }
+            return false;
+        }
+        if (activateSiz > coreSize && (std::time(nullptr) - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
+            // 线程空闲时间过长且大于核心线程数
+            return true;
+        }
+        if (thread.getExit()) {
+            // 线程已经关闭
+            return true;
         }
         return false;
     }

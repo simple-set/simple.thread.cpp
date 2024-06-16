@@ -31,6 +31,9 @@ namespace simpleThread {
         // 线程池关闭状态
         bool volatile close = false;
 
+        // 工作线程空闲退出时间(秒)
+        int const IDLE_EXIT_TIME = 60;
+
         // 工作线程组
         std::map<std::thread::id, STLThread *> threads;
 
@@ -46,14 +49,14 @@ namespace simpleThread {
         // 构造函数
         ThreadManage(int coreSize, int maxSize, TaskQueue *queue);
 
-        // 初始化线程, 创建所有核心线程数
+        // 初始化线程, 创建核心线程数
         void initThreads();
 
         // 增加线程
         void addThread();
 
-        // 减少线程
-        void removeThread(STLThread *thread);
+        // 移出工作线程
+        bool removeThread(STLThread &thread);
 
         // 等待线程完成任务
         void join();

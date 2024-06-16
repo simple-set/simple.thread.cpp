@@ -32,20 +32,21 @@ namespace simpleThread {
         // 不管队列状态，立即退出执行
         bool volatile exit = false;
 
+        // 线程名称
+        std::string threadName;
+
         // 空闲退出时间(秒)
         int const IDLE_EXIT_TIME = 60;
 
         // 线程最近执行时间戳
         time_t executeTime = std::time(nullptr);
 
-        // 线程空闲时间
-        bool freeTime() const;
+        // 生成线程名称
+        std::string makeThreadName(std::string const& prefix);
 
-        // 线程等待超时
-        bool waitTimeout() const;
-
+    private:
         // 从管理器中移出线程
-        std::function<void(STLThread *)> removeThread;
+        std::function<bool(STLThread &)> removeThread;
 
         // 启动线程
         void start();
@@ -53,13 +54,17 @@ namespace simpleThread {
         // 执行任务
         void execute();
 
+        bool isContinue();
+
         // 执行业务
         static void work(const std::function<void()> &) noexcept;
 
     public:
-        explicit STLThread(TaskQueue *);
+        explicit STLThread(TaskQueue*, const std::string&);
 
         std::thread::id getId();
+
+        time_t getExecuteTime() const;
 
         // 阻塞线程, 等待所有任务完成
         void join();
@@ -70,7 +75,7 @@ namespace simpleThread {
         // 分离线程, 设置为daemon模式
         void setDaemon();
 
-        void setRemoveThread(const std::function<void(STLThread *)> &function);
+        void setRemoveThread(const std::function<bool(STLThread&)> function);
 
         void setCoreSize(const int *coreSize);
 

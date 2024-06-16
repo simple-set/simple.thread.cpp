@@ -8,14 +8,8 @@ namespace simpleThread {
             : coreSize(coreSize), maxSize(maxSize), queue(queue) {}
 
     STLThread *ThreadManage::makeThread() {
-        STLThread *thread = this->factory.create(this->queue);
-        thread->setMaxSize(&this->maxSize);
-        thread->setCoreSize(&this->coreSize);
-        thread->setActivateSiz(&this->activateSiz);
-
-        auto removeThread = std::bind(&ThreadManage::removeThread, this, std::placeholders::_1);
-        thread->setRemoveThread(removeThread);
-
+        auto *thread = new STLThread(queue, "simplePool-");
+        thread->setRemoveThread( std::bind(&ThreadManage::removeThread, this, std::placeholders::_1));
         return thread;
     }
 
@@ -37,10 +31,18 @@ namespace simpleThread {
         this->activateSiz++;
     }
 
-    void ThreadManage::removeThread(STLThread *thread) {
+    bool ThreadManage::removeThread(STLThread &thread) {
         std::lock_guard<std::recursive_mutex> lock(this->mtx);
-        this->threads.erase(thread->getId());
-        this->activateSiz--;
+
+        if (this->threads.count(thread.getId())) {
+            time_t now = std::time(nullptr);
+            if (activateSiz > coreSize && (now - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
+                this->threads.erase(thread.getId());
+                this->activateSiz--;
+                return true;
+            }
+        }
+        return false;
     }
 
     void ThreadManage::setCoreSize(int size) {

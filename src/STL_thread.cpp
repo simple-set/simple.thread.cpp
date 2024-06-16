@@ -1,20 +1,20 @@
 #include <iostream>
+#include <sstream>
 #include "STL_thread.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 namespace simpleThread {
 
-    STLThread::STLThread(TaskQueue *queue) : queue(queue) {
+    STLThread::STLThread(TaskQueue *queue, const std::string& name) : queue(queue)  {
         this->workThread = std::move(std::thread(&STLThread::start, std::ref(*this)));
+        this->threadName = this->makeThreadName(name);
+        std::cout << "Create thread: " << this->threadName << std::endl;
     }
 
     void STLThread::start() {
         this->execute();
-        if (this->removeThread != nullptr) {
-            // 执行结束, 移出线程
-            this->removeThread(this);
-        }
+        std::cout << "destroy  thread: " << this->threadName << std::endl;
     }
 
     void STLThread::execute() {
@@ -26,8 +26,8 @@ namespace simpleThread {
                 this->executeTime = std::time(nullptr);
                 continue;
             }
-            if (this->waitTimeout()) {
-                // 超过空闲时间且活动线程大于核心线程数, 退出当前线程
+            if (this->isContinue()) {
+                // 线程持续继续执行
                 return;
             }
             if (this->done && this->queue->size() <= 0) {
@@ -67,21 +67,28 @@ namespace simpleThread {
         }
     }
 
-    bool STLThread::waitTimeout() const {
-        if (coreSize == nullptr || maxSize == nullptr || activateSiz == nullptr) {
-            return false;
+    bool STLThread::isContinue() {
+        if (this->removeThread != nullptr) {
+            return this->removeThread(*this);
         }
-        if (this->freeTime() && *activateSiz > *coreSize) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
-    bool STLThread::freeTime() const {
-        return (std::time(nullptr) - this->executeTime) > this->IDLE_EXIT_TIME;
-    }
+//    bool STLThread::waitTimeout() const {
+//        if (coreSize == nullptr || maxSize == nullptr || activateSiz == nullptr) {
+//            return false;
+//        }
+//        if (this->freeTime() && *activateSiz > *coreSize) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    bool STLThread::freeTime() const {
+//        return (std::time(nullptr) - this->executeTime) > this->IDLE_EXIT_TIME;
+//    }
 
-    void STLThread::setRemoveThread(const std::function<void(STLThread *)> &function) {
+    void STLThread::setRemoveThread(const std::function<bool(STLThread&)> function) {
         STLThread::removeThread = function;
     }
 
@@ -95,6 +102,16 @@ namespace simpleThread {
 
     void STLThread::setActivateSiz(const int *size) {
         STLThread::activateSiz = size;
+    }
+
+    time_t STLThread::getExecuteTime() const {
+        return executeTime;
+    }
+
+    std::string STLThread::makeThreadName(std::string const& prefix) {
+        std::ostringstream oss;
+        oss << this->workThread.get_id();
+        return prefix + "-" + oss.str();
     }
 }
 #pragma clang diagnostic pop

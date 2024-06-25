@@ -1,0 +1,9 @@
+{
+  "name" : "simple-thread-cpp",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "7977f0a771e64e9811d32aa30d9a247e09c39b2e",
+  "dependencies" : [ {
+    "name" : "spdlog",
+    "version>=" : "1.14.1"
+  } ]
+}

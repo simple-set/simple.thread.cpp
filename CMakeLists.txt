@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #include_directories(src)
+find_package(spdlog CONFIG REQUIRED)
 
 add_executable(simple_thread_cpp
         src/main.cpp
@@ -20,6 +21,10 @@ add_executable(simple_thread_cpp
         src/task_queue.cpp
         src/thread_manage.h
         src/thread_manage.cpp
+        src/logger.h
+        src/logger.cpp
 )
-
-target_link_libraries(simple_thread_cpp pthread)
+target_link_libraries(simple_thread_cpp
+        PRIVATE pthread
+        PRIVATE spdlog::spdlog
+)

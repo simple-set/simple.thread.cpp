@@ -4,6 +4,7 @@
 #include "thread_factory.h"
 #include "thread_pool.h"
 #include "thread_manage.h"
+#include "logger.h"
 
 
 class Test  {
@@ -82,8 +83,8 @@ int main() {
 
 
     simpleThread::ThreadPool pool(1, 2);
-    auto result = pool.submit(getTid);
-    std::cout << "tid: " << result.get() << std::endl;
+    pool.execute(getTid);
+//    auto result = pool.submit(getTid);
     pool.join();
     return 0;
 }

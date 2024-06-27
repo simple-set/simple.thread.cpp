@@ -6,10 +6,27 @@
 
 namespace simpleThread {
     class Log {
+
     private:
         std::shared_ptr<spdlog::logger> logger;
+        spdlog::level::level_enum logLevel = spdlog::level::debug;
+        std::string logFormat = "%Y-%m-%d %H:%M:%S.%e %l %n pid:%P tid:%t %v";
+
     public:
-        explicit Log(const std::shared_ptr<spdlog::logger> &logger) : logger(logger){};
+        explicit Log(const std::shared_ptr<spdlog::logger> &logger) : logger(logger){
+            this->logger->set_level(logLevel);
+            this->logger->set_pattern(this->logFormat);
+        };
+
+        void setLevelEnum(spdlog::level::level_enum level) {
+            this->logLevel = level;
+            this->logger->set_level(level);
+        }
+
+        void setLogFormat(const std::string &format) {
+            this->logFormat = format;
+            this->logger->set_pattern(this->logFormat);
+        }
 
         template<typename ...Args>
         void debug(const char *message, Args &&...args) {

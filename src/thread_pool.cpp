@@ -1,5 +1,6 @@
 #include "thread_pool.h"
 #include "utils.h"
+#include "logger.h"
 
 namespace simpleThread {
     ThreadPool::ThreadPool() : ThreadPool(cpuCount()) {}
@@ -14,6 +15,7 @@ namespace simpleThread {
         if (maxSize <= 0 || maxSize < coreSize) {
             this->threadManage.setMaxSize(cpuCount());
         }
+        loggerFactory()->info("Create thread pool, coreSize:{}, maxSize:{}", this->getCoreSize(), this->getMaxSize());
         this->threadManage.initThreads();
     }
 

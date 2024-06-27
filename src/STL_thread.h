@@ -7,10 +7,13 @@
 #include <ctime>
 #include <functional>
 #include "task_queue.h"
+#include "logger.h"
 
 namespace simpleThread {
     class STLThread {
     private:
+        Log* logger = loggerFactory();
+
         // 任务线程
         std::thread workThread;
 

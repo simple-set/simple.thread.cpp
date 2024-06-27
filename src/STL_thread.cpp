@@ -1,21 +1,25 @@
 #include <iostream>
 #include <sstream>
 #include "STL_thread.h"
+#include "logger.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 namespace simpleThread {
-
     STLThread::STLThread(TaskQueue *queue, const std::string &name) : queue(queue) {
         this->workThread = std::thread(&STLThread::start, std::ref(*this));
         this->threadName = this->makeThreadName(name);
         this->threadId = this->workThread.get_id();
     }
 
+    STLThread::~STLThread() {
+        this->logger->debug("Destroy thread {}", this->threadName);
+    }
+
     void STLThread::start() {
-        std::cout << "create thread: " << this->threadName << std::endl;
+        this->logger->debug("Create and initialize thread {}", this->threadName);
         this->execute();
-        std::cout << "destroy  thread: " << this->threadName << std::endl;
+        this->logger->debug("Create and initialize thread {}", this->threadName);
     }
 
     void STLThread::execute() {
@@ -37,7 +41,7 @@ namespace simpleThread {
         try {
             task();
         } catch (std::exception &e) {
-            std::cerr << "execute task error: " << e.what() << std::endl;
+            loggerFactory()->warn("execute task error: ", e.what());
         }
     }
 
@@ -86,10 +90,6 @@ namespace simpleThread {
         std::ostringstream oss;
         oss << this->workThread.get_id();
         return prefix + "-" + oss.str();
-    }
-
-    STLThread::~STLThread() {
-        std::cout << "~STLThread: " << this->threadName << std::endl;
     }
 
     volatile bool STLThread::getExit() const {

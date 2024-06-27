@@ -1,5 +1,14 @@
+#include <iostream>
 #include "logger.h"
 
-std::shared_ptr<spdlog::logger> loggerFactory() {
-    return  spdlog::stdout_color_mt("console");
+namespace simpleThread {
+
+    static Log *defaultLogger = nullptr;
+
+    Log *loggerFactory() {
+        if (defaultLogger == nullptr) {
+            defaultLogger = new Log(spdlog::stdout_color_mt("console"));
+        }
+        return defaultLogger;
+    }
 }

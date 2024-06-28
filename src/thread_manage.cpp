@@ -8,7 +8,7 @@ namespace simpleThread {
             : coreSize(coreSize), maxSize(maxSize), queue(queue) {}
 
     STLThread *ThreadManage::makeThread() {
-        auto* thread = new STLThread(queue, "simplePool");
+        auto* thread = new STLThread(queue, "thread");
         thread->setRemoveThread( std::bind(&ThreadManage::removeThread, this, std::placeholders::_1));
         return thread;
     }

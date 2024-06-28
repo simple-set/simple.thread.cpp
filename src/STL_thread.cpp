@@ -17,9 +17,9 @@ namespace simpleThread {
     }
 
     void STLThread::start() {
-        this->logger->debug("Create and initialize thread {}", this->threadName);
+        this->logger->debug("create thread {}", this->threadName);
         this->execute();
-        this->logger->debug("Create and initialize thread {}", this->threadName);
+        this->logger->debug("exit thread {}", this->threadName);
     }
 
     void STLThread::execute() {

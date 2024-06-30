@@ -7,9 +7,9 @@
 #pragma clang diagnostic ignored "-Wshadow"
 namespace simpleThread {
     STLThread::STLThread(TaskQueue *queue, const std::string &name) : queue(queue) {
+        this->threadNamePrefix = name;
         this->workThread = std::thread(&STLThread::start, std::ref(*this));
-        this->threadName = this->makeThreadName(name);
-        this->threadId = this->workThread.get_id();
+        this->setThreadId();
     }
 
     STLThread::~STLThread() {
@@ -17,6 +17,7 @@ namespace simpleThread {
     }
 
     void STLThread::start() {
+        this->setThreadName();
         this->logger->debug("create thread {}", this->threadName);
         this->execute();
         this->logger->debug("exit thread {}", this->threadName);
@@ -90,6 +91,18 @@ namespace simpleThread {
         std::ostringstream oss;
         oss << this->workThread.get_id();
         return prefix + "-" + oss.str();
+    }
+
+    void STLThread::setThreadName() {
+        std::ostringstream oss;
+        oss << this->workThread.get_id();
+        this->threadName =  this->threadNamePrefix + "-" + oss.str();
+    }
+
+    void STLThread::setThreadId() {
+        this->threadId = this->workThread.get_id();
+//        this->threadId = std::this_thread::get_id();
+//        this->threadId =
     }
 
     volatile bool STLThread::getExit() const {

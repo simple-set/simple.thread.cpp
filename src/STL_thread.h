@@ -26,11 +26,19 @@ namespace simpleThread {
         // 退出线程
         bool volatile exit = false;
 
+        // 线程名前缀
+        std::string threadNamePrefix;
+
         // 线程名称
         std::string threadName;
 
+        // 设置线程名
+        void setThreadName();
+
         // 线程id
         std::thread::id threadId;
+
+        void setThreadId();
 
         // 线程最近执行时间戳, 用于空闲回收
         time_t executeTime = std::time(nullptr);

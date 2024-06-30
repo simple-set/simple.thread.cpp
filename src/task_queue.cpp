@@ -36,13 +36,13 @@ namespace simpleThread {
         return this->queue.size();
     }
 
-    bool TaskQueue::getClose() const {
-        return close;
-    }
-
     void TaskQueue::setClose() {
         std::unique_lock<std::mutex> lock(this->mtx);
         this->cv.notify_all();
         TaskQueue::close = true;
+    }
+
+    volatile bool TaskQueue::isClose() const {
+        return this->close;
     }
 }

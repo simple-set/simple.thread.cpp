@@ -28,6 +28,8 @@ namespace simpleThread {
 
         explicit ThreadPool(int coreSize, int maxSize);
 
+        virtual ~ThreadPool();
+
         // 执行任务
         template<class F, class... Args>
         void execute(F &&f, Args &&... args) noexcept {

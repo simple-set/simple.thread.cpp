@@ -31,9 +31,9 @@ namespace simpleThread {
 
         std::function<void()> pull();
 
-        [[nodiscard]] bool getClose() const;
-
         void setClose();
+
+        [[nodiscard]] volatile bool isClose() const;
 
         void reset();
 

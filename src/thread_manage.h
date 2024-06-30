@@ -32,12 +32,12 @@ namespace simpleThread {
         int const IDLE_EXIT_TIME = 60;
 
         // 工作线程组
-        std::map<std::thread::id, STLThread*> threads;
+        std::map<std::thread::id, STLThread *> threads;
 
-        std::vector<STLThread*> getThreadList();
+        std::vector<STLThread *> getThreadList();
 
         // 创建线程
-        STLThread* makeThread();
+        STLThread *makeThread();
 
         // 销毁已关闭的线程
         void destroyThread();
@@ -50,6 +50,7 @@ namespace simpleThread {
 
     public:
         ThreadManage(int coreSize, int maxSize, TaskQueue *queue);
+
         ~ThreadManage();
 
         // 初始化线程, 创建核心线程数

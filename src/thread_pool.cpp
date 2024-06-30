@@ -19,6 +19,10 @@ namespace simpleThread {
         this->threadManage.initThreads();
     }
 
+    ThreadPool::~ThreadPool() {
+        this->shutdown();
+    }
+
     bool ThreadPool::canExecute() {
         if (this->threadManage.getClose() || this->taskQueue.getClose()) {
             // 线程池已关闭,丢弃任务
@@ -39,8 +43,10 @@ namespace simpleThread {
     }
 
     void ThreadPool::shutdown() {
-        this->taskQueue.setClose();
-        this->threadManage.shutdown();
+        if (!this->taskQueue.isClose()) {
+            this->taskQueue.setClose();
+            this->threadManage.shutdown();
+        }
     }
 
     int ThreadPool::getCoreSize() const {

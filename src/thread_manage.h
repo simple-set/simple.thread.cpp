@@ -5,7 +5,6 @@
 #include <mutex>
 #include "task_queue.h"
 #include "STL_thread.h"
-#include "thread_factory.h"
 
 namespace simpleThread {
     /**

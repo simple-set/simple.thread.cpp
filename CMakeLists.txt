@@ -9,8 +9,6 @@ find_package(spdlog CONFIG REQUIRED)
 
 add_executable(simple_thread_cpp
         src/main.cpp
-        src/thread_factory.cpp
-        src/thread_factory.h
         src/thread_pool.cpp
         src/thread_pool.h
         src/utils.cpp

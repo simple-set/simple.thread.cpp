@@ -5,7 +5,6 @@
 
 #include <future>
 #include <vector>
-#include "thread_factory.h"
 #include "task_queue.h"
 #include "thread_manage.h"
 

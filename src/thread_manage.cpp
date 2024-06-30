@@ -18,7 +18,7 @@ namespace simpleThread {
             if (std::this_thread::get_id() == thread->getId()) {
                 continue;
             }
-            if (thread->getExit()) {
+            if (thread->isExit()) {
                 this->threads.erase(thread->getId());
                 delete thread;
             }
@@ -49,12 +49,8 @@ namespace simpleThread {
     }
 
     bool ThreadManage::threadTimeout(simpleThread::STLThread &thread) {
-        if (this->getTotal() > coreSize && (std::time(nullptr) - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
-            // 线程空闲时间过长且大于核心线程数
-            return true;
-        }
-        if (thread.getExit()) {
-            // 线程已经关闭
+        time_t waitTime = std::time(nullptr) - thread.getExecuteTime();
+        if (this->getTotal() > coreSize && waitTime > this->IDLE_EXIT_TIME) {
             return true;
         }
         return false;

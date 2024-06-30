@@ -39,7 +39,7 @@ namespace simpleThread {
         // 创建线程
         STLThread* makeThread();
 
-        // 销毁线程
+        // 销毁已关闭的线程
         void destroyThread();
 
         // 移出工作线程

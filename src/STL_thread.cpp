@@ -23,7 +23,7 @@ namespace simpleThread {
     }
 
     void STLThread::execute() {
-        while (!this->exit) {
+        while (!this->isExit()) {
             auto task = this->queue->pull();
 
             if (task != nullptr) {
@@ -33,7 +33,7 @@ namespace simpleThread {
                 this->state = wait;
                 continue;
             }
-            if (this->isContinue()) {
+            if (this->isBreak()) {
                 return;
             }
         }
@@ -52,31 +52,44 @@ namespace simpleThread {
     }
 
     void STLThread::join() {
-        this->done = true;
+        this->isJoin = true;
         if (this->workThread.joinable()) {
             this->workThread.join();
         }
-        this->setExit(true);
     }
 
     void STLThread::shutdown() {
-        this->setExit(true);
+        this->setExit();
     }
 
-    void STLThread::setDaemon() {
+    bool STLThread::isExit() {
+        return this->state == close;
+    }
+
+    void STLThread::setExit() {
         if (this->workThread.joinable()) {
             this->workThread.detach();
         }
+        this->state = close;
     }
 
-    bool STLThread::isContinue() {
+    bool STLThread::isBreak() {
         if (this->removeThread != nullptr && this->removeThread(*this)) {
-            this->setExit(true);
+            // 线程空闲超时
+            this->setExit();
             return true;
         }
-        if (this->done && this->queue->size() <= 0) {
+
+        if (this->isJoin && this->queue->size() <= 0) {
+            this->setExit();
             return true;
         }
+
+        if (this->isExit()) {
+            // 线程已退出
+            return true;
+        }
+
         return false;
     }
 
@@ -96,15 +109,6 @@ namespace simpleThread {
 
     void STLThread::setThreadId() {
         this->threadId = this->workThread.get_id();
-    }
-
-    volatile bool STLThread::getExit() const {
-        return this->exit;
-    }
-
-    void STLThread::setExit(volatile bool exit) {
-        this->setDaemon();
-        STLThread::exit = exit;
     }
 
     volatile ThreadState STLThread::getState() const {

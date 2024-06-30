@@ -24,7 +24,10 @@ namespace simpleThread {
             // 线程池已关闭,丢弃任务
             return false;
         }
-        if (this->threadManage.getActivateSiz() < this->threadManage.getMaxSize()) {
+
+        int wait = this->threadManage.getWaitSize();
+        int total = this->threadManage.getTotal();
+        if (wait <= 0 && total < this->threadManage.getMaxSize()) {
             this->threadManage.addThread();
         }
         return true;
@@ -42,10 +45,6 @@ namespace simpleThread {
 
     int ThreadPool::getCoreSize() const {
         return this->threadManage.getCoreSize();
-    }
-
-    int ThreadPool::getActiveSize() const {
-        return this->threadManage.getActivateSiz();
     }
 
     int ThreadPool::getMaxSize() const {

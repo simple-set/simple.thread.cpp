@@ -27,8 +27,10 @@ namespace simpleThread {
             auto task = this->queue->pull();
 
             if (task != nullptr) {
+                this->state = activate;
                 STLThread::work(task);
                 this->executeTime = std::time(nullptr);
+                this->state = wait;
                 continue;
             }
             if (this->isContinue()) {
@@ -103,6 +105,10 @@ namespace simpleThread {
     void STLThread::setExit(volatile bool exit) {
         this->setDaemon();
         STLThread::exit = exit;
+    }
+
+    volatile ThreadState STLThread::getState() const {
+        return state;
     }
 }
 #pragma clang diagnostic pop

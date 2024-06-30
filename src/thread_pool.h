@@ -60,9 +60,6 @@ namespace simpleThread {
 
         //最大线程数
         int getMaxSize() const;
-
-        // 活跃线程数
-        int getActiveSize() const;
     };
 }
 

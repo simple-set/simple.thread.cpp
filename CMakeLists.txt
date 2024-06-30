@@ -23,6 +23,7 @@ add_executable(simple_thread_cpp
         src/thread_manage.cpp
         src/logger.h
         src/logger.cpp
+        src/thread_state.h
 )
 target_link_libraries(simple_thread_cpp
         PRIVATE pthread

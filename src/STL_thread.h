@@ -8,11 +8,12 @@
 #include <functional>
 #include "task_queue.h"
 #include "logger.h"
+#include "thread_state.h"
 
 namespace simpleThread {
     class STLThread {
     private:
-        Log* logger = loggerFactory();
+        Log *logger = loggerFactory();
 
         // 工作线程
         std::thread workThread;
@@ -25,6 +26,9 @@ namespace simpleThread {
 
         // 退出线程
         bool volatile exit = false;
+
+        // 线程状态
+        ThreadState volatile state = wait;
 
         // 线程名称
         std::string threadName;
@@ -59,6 +63,7 @@ namespace simpleThread {
 
     public:
         explicit STLThread(TaskQueue *, const std::string &);
+
         ~STLThread();
 
         std::thread::id getId();
@@ -76,6 +81,8 @@ namespace simpleThread {
         void setExit(volatile bool exit);
 
         volatile bool getExit() const;
+
+        volatile ThreadState getState() const;
     };
 }
 

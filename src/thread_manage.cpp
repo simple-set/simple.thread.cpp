@@ -8,8 +8,8 @@ namespace simpleThread {
             : coreSize(coreSize), maxSize(maxSize), queue(queue) {}
 
     STLThread *ThreadManage::makeThread() {
-        auto* thread = new STLThread(queue, "thread");
-        thread->setRemoveThread( std::bind(&ThreadManage::removeThread, this, std::placeholders::_1));
+        auto *thread = new STLThread(queue, "thread");
+        thread->setRemoveThread(std::bind(&ThreadManage::removeThread, this, std::placeholders::_1));
         return thread;
     }
 
@@ -20,7 +20,6 @@ namespace simpleThread {
             }
             if (thread->getExit()) {
                 this->threads.erase(thread->getId());
-                this->activateSiz--;
                 delete thread;
             }
         }
@@ -41,7 +40,6 @@ namespace simpleThread {
         std::lock_guard<std::recursive_mutex> lock(this->mtx);
         STLThread *thread = this->makeThread();
         this->threads.insert(std::make_pair(thread->getId(), thread));
-        this->activateSiz++;
     }
 
     bool ThreadManage::removeThread(STLThread &thread) {
@@ -50,8 +48,8 @@ namespace simpleThread {
         return this->threadTimeout(thread);
     }
 
-    bool ThreadManage::threadTimeout(simpleThread::STLThread &thread) const {
-        if (activateSiz > coreSize && (std::time(nullptr) - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
+    bool ThreadManage::threadTimeout(simpleThread::STLThread &thread) {
+        if (this->getTotal() > coreSize && (std::time(nullptr) - thread.getExecuteTime()) > this->IDLE_EXIT_TIME) {
             // 线程空闲时间过长且大于核心线程数
             return true;
         }
@@ -78,8 +76,18 @@ namespace simpleThread {
         return maxSize;
     }
 
-    int ThreadManage::getActivateSiz() const {
-        return activateSiz;
+    int ThreadManage::getWaitSize() {
+        int waitSize = 0;
+        for (const auto &thread: this->getThreadList()) {
+            if (thread->getState() == wait) {
+                waitSize++;
+            }
+        }
+        return waitSize;
+    }
+
+    int ThreadManage::getTotal() {
+        return this->threads.size();
     }
 
     void ThreadManage::join() {

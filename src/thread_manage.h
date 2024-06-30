@@ -22,9 +22,6 @@ namespace simpleThread {
         // 最大线程数
         int maxSize = 0;
 
-        // 活跃线程数
-        int volatile activateSiz = 0;
-
         // 线程任务队列
         TaskQueue *queue = nullptr;
 
@@ -49,7 +46,7 @@ namespace simpleThread {
         bool removeThread(STLThread &thread);
 
         // 线程是否空闲超时
-        bool threadTimeout(STLThread &thread) const;
+        bool threadTimeout(STLThread &thread);
 
     public:
         ThreadManage(int coreSize, int maxSize, TaskQueue *queue);
@@ -77,7 +74,11 @@ namespace simpleThread {
 
         [[nodiscard]] int getMaxSize() const;
 
-        [[nodiscard]] int getActivateSiz() const;
+        // 等待线程数
+        int getWaitSize();
+
+        // 总线程数
+        int getTotal();
     };
 }
 

@@ -24,7 +24,7 @@ namespace simpleThread {
     }
 
     bool ThreadPool::canExecute() {
-        if (this->threadManage.getClose() || this->taskQueue.getClose()) {
+        if (this->threadManage.getClose() || this->taskQueue.isClose()) {
             // 线程池已关闭,丢弃任务
             return false;
         }

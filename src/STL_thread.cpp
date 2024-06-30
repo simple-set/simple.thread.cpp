@@ -7,9 +7,10 @@
 #pragma clang diagnostic ignored "-Wshadow"
 namespace simpleThread {
     STLThread::STLThread(TaskQueue *queue, const std::string &name) : queue(queue) {
-        this->threadNamePrefix = name;
         this->workThread = std::thread(&STLThread::start, std::ref(*this));
         this->setThreadId();
+        this->setThreadName(name);
+        this->logger->debug("create thread {}", this->threadName);
     }
 
     STLThread::~STLThread() {
@@ -17,8 +18,6 @@ namespace simpleThread {
     }
 
     void STLThread::start() {
-        this->setThreadName();
-        this->logger->debug("create thread {}", this->threadName);
         this->execute();
         this->logger->debug("exit thread {}", this->threadName);
     }
@@ -87,22 +86,14 @@ namespace simpleThread {
         return executeTime;
     }
 
-    std::string STLThread::makeThreadName(std::string const &prefix) {
+    void STLThread::setThreadName(std::string const & prefix) {
         std::ostringstream oss;
-        oss << this->workThread.get_id();
-        return prefix + "-" + oss.str();
-    }
-
-    void STLThread::setThreadName() {
-        std::ostringstream oss;
-        oss << this->workThread.get_id();
-        this->threadName =  this->threadNamePrefix + "-" + oss.str();
+        oss << this->getId();
+        this->threadName =  prefix + "-" + oss.str();
     }
 
     void STLThread::setThreadId() {
         this->threadId = this->workThread.get_id();
-//        this->threadId = std::this_thread::get_id();
-//        this->threadId =
     }
 
     volatile bool STLThread::getExit() const {

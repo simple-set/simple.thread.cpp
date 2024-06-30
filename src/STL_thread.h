@@ -14,7 +14,7 @@ namespace simpleThread {
     private:
         Log* logger = loggerFactory();
 
-        // 任务线程
+        // 工作线程
         std::thread workThread;
 
         // 任务队列
@@ -26,14 +26,11 @@ namespace simpleThread {
         // 退出线程
         bool volatile exit = false;
 
-        // 线程名前缀
-        std::string threadNamePrefix;
-
         // 线程名称
         std::string threadName;
 
         // 设置线程名
-        void setThreadName();
+        void setThreadName(std::string const &prefix);
 
         // 线程id
         std::thread::id threadId;
@@ -42,9 +39,6 @@ namespace simpleThread {
 
         // 线程最近执行时间戳, 用于空闲回收
         time_t executeTime = std::time(nullptr);
-
-        // 生成线程名称
-        std::string makeThreadName(std::string const &prefix);
 
         // 从管理器中移出线程
         std::function<bool(STLThread &)> removeThread;

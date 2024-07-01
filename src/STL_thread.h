@@ -25,7 +25,7 @@ namespace simpleThread {
         volatile bool isJoin = false;
 
         // 线程状态
-        volatile ThreadState state = wait;
+        volatile ThreadState state = ready;
 
         // 线程名称
         std::string threadName;

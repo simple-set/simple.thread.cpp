@@ -29,7 +29,7 @@ namespace simpleThread {
             return false;
         }
 
-        int wait = this->threadManage.getWaitSize();
+        int wait = this->threadManage.getReadySize();
         int total = this->threadManage.getTotal();
         if (wait <= 0 && total < this->threadManage.getMaxSize()) {
             this->threadManage.addThread();

@@ -30,7 +30,7 @@ namespace simpleThread {
                 this->state = activate;
                 STLThread::work(task);
                 this->executeTime = std::time(nullptr);
-                this->state = wait;
+                this->state = ready;
                 continue;
             }
             if (this->isBreak()) {

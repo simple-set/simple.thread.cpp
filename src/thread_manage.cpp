@@ -72,14 +72,14 @@ namespace simpleThread {
         return maxSize;
     }
 
-    int ThreadManage::getWaitSize() {
-        int waitSize = 0;
+    int ThreadManage::getReadySize() {
+        int size = 0;
         for (const auto &thread: this->getThreadList()) {
-            if (thread->getState() == wait) {
-                waitSize++;
+            if (thread->getState() == ready) {
+                size++;
             }
         }
-        return waitSize;
+        return size;
     }
 
     int ThreadManage::getTotal() {

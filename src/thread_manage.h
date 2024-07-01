@@ -75,7 +75,7 @@ namespace simpleThread {
         [[nodiscard]] int getMaxSize() const;
 
         // 等待线程数
-        int getWaitSize();
+        int getReadySize();
 
         // 总线程数
         int getTotal();
